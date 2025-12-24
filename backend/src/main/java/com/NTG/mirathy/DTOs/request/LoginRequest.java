@@ -1,4 +1,4 @@
-package com.NTG.mirathy.DTOs;
+package com.NTG.mirathy.DTOs.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

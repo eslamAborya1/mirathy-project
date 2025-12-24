@@ -1,6 +1,6 @@
 package com.NTG.mirathy.exceptionHandler;
 
-import com.NTG.mirathy.DTOs.ErrorResponse;
+import com.NTG.mirathy.DTOs.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,4 +78,21 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+    @ExceptionHandler(InvalidInheritanceCaseException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidInheritanceCase(
+            InvalidInheritanceCaseException ex,
+            HttpServletRequest request
+    ) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Invalid Inheritance Case")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
 }

@@ -1,8 +1,8 @@
 package com.NTG.mirathy.controller;
 
-import com.NTG.mirathy.DTOs.AuthResponse;
-import com.NTG.mirathy.DTOs.LoginRequest;
-import com.NTG.mirathy.DTOs.SignupRequest;
+import com.NTG.mirathy.DTOs.response.AuthResponse;
+import com.NTG.mirathy.DTOs.request.LoginRequest;
+import com.NTG.mirathy.DTOs.request.SignupRequest;
 import com.NTG.mirathy.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

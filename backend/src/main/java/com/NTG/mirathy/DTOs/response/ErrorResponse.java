@@ -1,4 +1,4 @@
-package com.NTG.mirathy.DTOs;
+package com.NTG.mirathy.DTOs.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

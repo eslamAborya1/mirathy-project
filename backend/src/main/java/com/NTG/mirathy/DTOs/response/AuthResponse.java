@@ -1,4 +1,4 @@
-package com.NTG.mirathy.DTOs;
+package com.NTG.mirathy.DTOs.response;
 
 import com.NTG.mirathy.Entity.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
