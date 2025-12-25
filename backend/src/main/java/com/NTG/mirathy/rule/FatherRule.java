@@ -16,6 +16,7 @@ public class FatherRule implements InheritanceRule{
 
     @Override
     public InheritanceMember calculate(InheritanceCase inheritanceCase) {
+        System.out.println("Father rule calculated");
         return null;
     }
 }
