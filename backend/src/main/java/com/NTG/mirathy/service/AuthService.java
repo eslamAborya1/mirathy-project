@@ -72,7 +72,7 @@ public class AuthService {
     }
 
     public AuthResponse register(SignupRequest request) throws MessagingException {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new RuntimeException("Email already registered");
         }
 
