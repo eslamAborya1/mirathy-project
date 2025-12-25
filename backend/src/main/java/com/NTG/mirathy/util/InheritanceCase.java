@@ -42,8 +42,15 @@ public class InheritanceCase {
         return has(HeirType.SON);
     }
 
+    public boolean hasDescendant(){
+        return has(HeirType.SON)||has(HeirType.DAUGHTER)
+                ||has(HeirType.DAUGHTER_OF_SON)
+                ||has(HeirType.SON_OF_SON);
+    }
+
     public BigDecimal getNetEstate() {
         return  totalEstate.subtract(debts).subtract(will);
     }
+
 
 }
