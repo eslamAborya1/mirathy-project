@@ -30,6 +30,13 @@ public class AuthController {
         AuthResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+    @GetMapping("/activate-account")
+    public ResponseEntity<Void> activateAccount(
+            @RequestParam String token
+    ) throws MessagingException {
+        authService.activateAccount(token);
+        return ResponseEntity.ok().build();
+    }
 
 
 //    @GetMapping("/me")

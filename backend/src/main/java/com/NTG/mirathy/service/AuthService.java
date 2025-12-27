@@ -18,10 +18,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -80,7 +83,7 @@ public class AuthService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .role(Role.USER)
-                .isActive(true)
+                .isActive(false)
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -115,7 +118,7 @@ public class AuthService {
     }
 
     private String generateAndSaveActivationToken(User savedUser) {
-        // generate a token
+
         String generatedToken = generateActinationToken(4);
         var token = ActivationToken.builder()
                 .token(generatedToken)
@@ -138,4 +141,33 @@ public class AuthService {
         return token.toString();
     }
 
+//    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+//        var auth = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        request.email(),
+//                        request.password()
+//                )
+//        );
+//        var claims = new HashMap<String,Object>();
+//        var user = ((User) auth.getPrincipal());
+//        claims.put("fullName",user.getFullName());
+//        UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
+//        var jwtToken = jwtService.generateToken(claims,userDetails);
+//        return AuthenticationResponse.builder()
+//                .token(jwtToken)
+//                .build();
+//    }
+    public void activateAccount(String token) throws MessagingException {
+        ActivationToken activationToken = activationTokenRepo.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid activation token"));
+        if (LocalDateTime.now().isAfter(activationToken.getExpiresAt())) {
+            sendValidationEmail(activationToken.getUser());
+            throw new MessagingException("Activation Token has expired A new token has been sent to your email.");
+        }
+        var user = userRepository.findById(activationToken.getUser().getId()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        user.setActive(true);
+        userRepository.save(user);
+        activationToken.setConfirmedAt(LocalDateTime.now());
+        activationTokenRepo.save(activationToken);
+    }
 }
