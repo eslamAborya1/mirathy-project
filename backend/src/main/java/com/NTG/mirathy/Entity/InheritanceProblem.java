@@ -25,10 +25,7 @@ public class InheritanceProblem {
 
     private String title;
 
-
-    private Double totalValue;
-
-
+    private String note;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

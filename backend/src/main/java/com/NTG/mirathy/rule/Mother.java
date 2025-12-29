@@ -4,8 +4,11 @@ import com.NTG.mirathy.DTOs.InheritanceShareDto;
 import com.NTG.mirathy.Entity.Enum.FixedShare;
 import com.NTG.mirathy.Entity.Enum.HeirType;
 import com.NTG.mirathy.Entity.Enum.ShareType;
+import com.NTG.mirathy.Entity.Enum.TaaasibRule;
 import com.NTG.mirathy.util.InheritanceCase;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Mother implements InheritanceRule {
     @Override
     public boolean canApply(InheritanceCase c) {
@@ -18,6 +21,7 @@ public class Mother implements InheritanceRule {
         FixedShare fixedShare = null;
         String reason = "";
         ShareType shareType = null;
+        TaaasibRule taaasibRule = null;
 
         if (c.hasDescendant() || hasMoreThanOneFullBrotherOrSister(c)
         ) {
@@ -40,7 +44,7 @@ public class Mother implements InheritanceRule {
                     "قوله تعالى: \"فَإِن لَّمْ يَكُن لَّهُ وَلَدٌ وَوَرِثَهُ أَبَوَاهُ فَلِأُمِّهِ الثُّلُثُ\" (النساء: 11)";
 
         }
-        return new InheritanceShareDto(heirType,shareType,fixedShare,reason);
+        return new InheritanceShareDto(heirType,shareType,fixedShare,taaasibRule,reason);
     }
     private boolean hasMoreThanOneFullBrotherOrSister(InheritanceCase c){
         int fullSiblingsCount = 0;

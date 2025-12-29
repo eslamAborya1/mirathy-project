@@ -6,13 +6,14 @@ import com.NTG.mirathy.DTOs.response.InheritanceMemberResponse;
 import com.NTG.mirathy.Entity.Enum.FixedShare;
 import com.NTG.mirathy.Entity.Enum.HeirType;
 import com.NTG.mirathy.Entity.Enum.ShareType;
-import com.NTG.mirathy.Entity.InheritanceMember;
+import com.NTG.mirathy.Entity.Enum.TaaasibRule;
 import com.NTG.mirathy.exceptionHandler.InvalidInheritanceCaseException;
 import com.NTG.mirathy.rule.InheritanceRule;
 import com.NTG.mirathy.util.InheritanceCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -30,8 +31,7 @@ public class InheritanceCalculationService {
         InheritanceCase inheritanceCase = new InheritanceCase(request.totalEstate(), request.debts(), request.will(), request.heirs());
         String title = arabicInheritanceTextService.generateText(request);
 
-
-                List <InheritanceShareDto> members = new ArrayList<>();
+        List<InheritanceShareDto> members = new ArrayList<>();
 
         for (InheritanceRule rule : rules) {
             if (rule.canApply(inheritanceCase)) {
@@ -39,6 +39,8 @@ public class InheritanceCalculationService {
             }
         }
 
+        members.forEach(System.out::println);
+        calculateIndividualFraction(members);
         // مؤقتًا – بعدين هترجع list كاملة
         return new InheritanceMemberResponse(
                 title,
@@ -50,6 +52,28 @@ public class InheritanceCalculationService {
                 "res"
         );
     }
+    private void calculateIndividualFraction(List<InheritanceShareDto> members) {
+        boolean taaasibRuleFound = false;
+        BigDecimal sum=BigDecimal.ZERO;
+        for (InheritanceShareDto member : members) {
+            if (member.shareType()==ShareType.FIXED) {
+              sum= sum.add(member.fixedShare().decimalValue());
+            }
+            if (member.taaasibRule()!=null){
+                taaasibRuleFound = true;
+            }
+        }
+        if (sum.compareTo(BigDecimal.ONE) > 0) {
+            //العول
+            System.out.println("العول");
+        } else if (sum.compareTo(BigDecimal.ONE)<0&&!taaasibRuleFound) {
+            System.out.println("الرد");
+            //الرد
+        }else {
+            System.out.println("we are here");
+        }
+    }
+
 
     private void validateRequest(InheritanceCalculationRequest request) {
 
@@ -61,6 +85,10 @@ public class InheritanceCalculationService {
 
         if (heirs == null || heirs.isEmpty()) {
             throw new InvalidInheritanceCaseException("Heirs must not be empty");
+        }
+
+        if (heirs.containsKey(HeirType.WIFE) && heirs.containsKey(HeirType.HUSBAND)) {
+            throw new InvalidInheritanceCaseException("Heirs cannot have both Wife and Husband");
         }
 
 

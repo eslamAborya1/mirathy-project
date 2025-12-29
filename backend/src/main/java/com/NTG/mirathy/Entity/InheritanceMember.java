@@ -4,6 +4,7 @@ package com.NTG.mirathy.Entity;
 import com.NTG.mirathy.Entity.Enum.FixedShare;
 import com.NTG.mirathy.Entity.Enum.HeirType;
 import com.NTG.mirathy.Entity.Enum.ShareType;
+import com.NTG.mirathy.Entity.Enum.TaaasibRule;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InheritanceMember {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,18 +25,19 @@ public class InheritanceMember {
     @Enumerated(EnumType.STRING)
     private HeirType memberType; // son, daughter, wife ...
 
-    @Enumerated(EnumType.STRING)
-    private ShareType shareFraction;
 
-    @Enumerated(EnumType.STRING)
-    private FixedShare fixedShare;
+    @Column(name = "share_description")
+    private String shareDescription;
+
+    private String reason;
+
+    private Integer memberCount;
+
+    @Column(name = "individual_share_fraction")
+    private String individualShareFraction;
 
     private Double shareValue;
 
-
-    private String description;
-
-    private Integer memberCount;
 
     @ManyToOne
     @JoinColumn(name = "problem_id", nullable = false)

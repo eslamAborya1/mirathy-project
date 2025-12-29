@@ -1,10 +1,12 @@
 package com.NTG.mirathy.util;
 
 import com.NTG.mirathy.Entity.Enum.HeirType;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class InheritanceCase {
     private final BigDecimal totalEstate;
@@ -21,9 +23,8 @@ public class InheritanceCase {
         this.totalEstate = totalEstate;
         this.debts = debts;
         this.will = will;
-        this.heirs=heirs==null?new HashMap<>():heirs;
+        this.heirs = heirs == null ? new HashMap<>() : heirs;
     }
-
 
 
     public int count(HeirType type) {
@@ -39,18 +40,26 @@ public class InheritanceCase {
     }
 
     public boolean hasMaleChild() {
-        return has(HeirType.SON);
+        return has(HeirType.SON)|| has(HeirType.SON_OF_SON);
+    }
+    public boolean hasFemaleChild() {
+        return has(HeirType.DAUGHTER) || has(HeirType.DAUGHTER_OF_SON);
     }
 
-    public boolean hasDescendant(){
-        return has(HeirType.SON)||has(HeirType.DAUGHTER)
-                ||has(HeirType.DAUGHTER_OF_SON)
-                ||has(HeirType.SON_OF_SON);
+    public boolean hasDescendant() {
+        return has(HeirType.SON) || has(HeirType.DAUGHTER)
+                || has(HeirType.DAUGHTER_OF_SON)
+                || has(HeirType.SON_OF_SON);
+    }
+
+    public int totalNumberOfHeirs() {
+        return heirs.size();
     }
 
     public BigDecimal getNetEstate() {
-        return  totalEstate.subtract(debts).subtract(will);
+        return totalEstate.subtract(debts).subtract(will);
     }
+
 
 
 }
