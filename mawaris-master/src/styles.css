@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "tailwindcss";
+
+body {
+ 
+  background-color: #bec0ae;
+  /* background-image: url('/abd.png');
+  background-size:auto;
+  background-attachment:fixed;
+  background-position: center center;
+  min-height: 100vh;
+  margin: 0; */
+}

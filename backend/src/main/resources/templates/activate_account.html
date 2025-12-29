@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>تفعيل البريد الإلكتروني</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+            font-family: Arial, Helvetica, sans-serif;
+            direction: rtl;
+        }
+
+        .email-container {
+            max-width: 500px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 22px;
+            color: #222;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 25px 0;
+            direction: ltr;
+        }
+
+        .otp-box {
+            width: 50px;
+            height: 55px;
+            line-height: 55px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #1c352d;
+            background-color: #f1f5f4;
+            border-radius: 8px;
+            border: 1px solid #dcdcdc;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #1c352d;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #888;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="email-container">
+
+    <!-- LOGO -->
+    <img
+            src="https://ntgclarity.com/wp-content/uploads/2020/03/cropped-NTG-Clarity-Logo-pk6lqv2fycz2q45ipyjvxu52cjouaxf1yuxe4lxjk2.png"
+            alt="الشعار"
+            class="logo"/>
+
+    <h1>تأكيد البريد الإلكتروني</h1>
+
+    <p>
+        شكرًا لتسجيلك معنا. يرجى استخدام رمز التفعيل التالي لتأكيد حسابك.
+        هذا الرمز صالح لفترة محدودة.
+    </p>
+
+    <!-- OTP -->
+    <div class="otp-container">
+        <div class="otp-box" th:text="${activation_code.charAt(0)}"></div>
+        <div class="otp-box" th:text="${activation_code.charAt(1)}"></div>
+        <div class="otp-box" th:text="${activation_code.charAt(2)}"></div>
+        <div class="otp-box" th:text="${activation_code.charAt(3)}"></div>
+    </div>
+
+    <!-- ACTIVATE BUTTON -->
+    <a class="btn"
+       th:href="${confirmationUrl}"
+       target="_blank">
+        قم بتأكيد الحساب
+    </a>
+
+    <p class="footer">
+        إذا لم تقم بطلب إنشاء هذا الحساب، يمكنك تجاهل هذه الرسالة بأمان.
+    </p>
+
+</div>
+
+</body>
+</html>
