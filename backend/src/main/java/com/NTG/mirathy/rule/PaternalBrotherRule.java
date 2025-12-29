@@ -1,0 +1,37 @@
+package com.NTG.mirathy.rule;
+
+import com.NTG.mirathy.DTOs.InheritanceShareDto;
+import com.NTG.mirathy.Entity.Enum.*;
+import com.NTG.mirathy.util.InheritanceCase;
+import org.springframework.stereotype.Component;
+
+@Component
+public class PaternalBrotherRule implements InheritanceRule {
+
+    @Override
+    public boolean canApply(InheritanceCase c) {
+
+        // لو مفيش أخ لأب → القاعدة مش مطبقة
+        if (!c.has(HeirType.PATERNAL_BROTHER)) return false;
+
+        // يحجبه الأب أو الابن أو ابن الابن أو الأخ لأبوين
+        if (c.has(HeirType.FATHER) || c.has(HeirType.SON) || c.has(HeirType.SON_OF_SON) || c.has(HeirType.FULL_BROTHER)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public InheritanceShareDto calculate(InheritanceCase c) {
+
+        // التعصيب: للأخ لأب إذا لم يحجبه أحد
+        return new InheritanceShareDto(
+                null,
+                HeirType.PATERNAL_BROTHER,
+                ShareType.TAASIB,
+                null,
+                "الأخ لأب يرث تعصيبًا إذا لم يحجبه الأب أو الابن أو ابن الابن أو الأخ لأبوين"
+        );
+    }
+}
