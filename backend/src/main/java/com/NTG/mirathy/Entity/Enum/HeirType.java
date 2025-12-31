@@ -51,4 +51,58 @@ public enum HeirType {
     private final String arabicName;
     private final Integer MAX_ALLOWED;
 
+    /* =================================================
+       🔥 منطق التعصيب (الإضافة المهمة)
+    ================================================= */
+
+    public boolean isTaasib() {
+        return switch (this) {
+
+            // فروع
+            case SON, DAUGHTER,
+                 SON_OF_SON, DAUGHTER_OF_SON,
+
+                 // إخوة
+                 FULL_BROTHER, FULL_SISTER,
+                 PATERNAL_BROTHER, PATERNAL_SISTER,
+
+                 // عصبات بالنفس
+                 SON_OF_FULL_BROTHER,
+                 SON_OF_PATERNAL_BROTHER,
+                 FULL_UNCLE,
+                 PATERNAL_UNCLE,
+                 SON_OF_FULL_UNCLE,
+                 SON_OF_PATERNAL_UNCLE
+                    -> true;
+
+            default -> false;
+        };
+    }
+
+    public int getUnit() {
+        return switch (this) {
+
+            // 👨‍🦱 الذكور = 2
+            case SON,
+                 SON_OF_SON,
+                 FULL_BROTHER,
+                 PATERNAL_BROTHER,
+                 SON_OF_FULL_BROTHER,
+                 SON_OF_PATERNAL_BROTHER,
+                 FULL_UNCLE,
+                 PATERNAL_UNCLE,
+                 SON_OF_FULL_UNCLE,
+                 SON_OF_PATERNAL_UNCLE
+                    -> 2;
+
+            // 👩‍🦱 الإناث = 1
+            case DAUGHTER,
+                 DAUGHTER_OF_SON,
+                 FULL_SISTER,
+                 PATERNAL_SISTER
+                    -> 1;
+
+            default -> 0;
+        };
+    }
 }

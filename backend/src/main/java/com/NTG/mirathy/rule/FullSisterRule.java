@@ -10,48 +10,37 @@ public class FullSisterRule implements InheritanceRule {
 
     @Override
     public boolean canApply(InheritanceCase c) {
-
-        // محجوبة بالأصل الوارث من الذكور أو الفرع الوارث
         if (c.has(HeirType.FATHER) || c.has(HeirType.GRANDFATHER)) return false;
         if (c.has(HeirType.SON) || c.has(HeirType.SON_OF_SON)) return false;
-
         return c.has(HeirType.FULL_SISTER);
     }
 
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
 
-        int sisters = c.count(HeirType.FULL_SISTER);
-
-        // مع أخ شقيق → تعصيب
         if (c.has(HeirType.FULL_BROTHER)) {
             return new InheritanceShareDto(
-                    null,
                     HeirType.FULL_SISTER,
+                    c.count(HeirType.FULL_SISTER),
+                    null,
+                    null,
                     ShareType.TAASIB,
                     null,
-                    "الأخت الشقيقة ترث تعصيبًا مع الأخ الشقيق"
+                    "الأخت الشقيقة ترث تعصيبًا مع الأخ الشقيق  للذكر مثل حظ الأنثيين .قال تعالى ( وَإِن كَانُواْ إِخْوَةً رِّجَالاً وَنِسَاء فَلِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ) ، ويشترط لذلك أن تكون المسألة كلالة أى لا يكون هناك ولد - مثل الإبن الصلبى وابن الإبن وإن نزل - ولا والد - الأب فقط عند الجمهور - وإلا حجبوا بهم"
             );
         }
 
-        // أخت واحدة → النصف
-        if (sisters == 1) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.FULL_SISTER,
-                    ShareType.FIXED,
-                    FixedShare.HALF,
-                    "للأخت الشقيقة النصف عند الكلالة"
-            );
-        }
+        FixedShare fixedShare =
+                c.count(HeirType.FULL_SISTER) == 1 ? FixedShare.HALF : FixedShare.TWO_THIRDS;
 
-        // أختان فأكثر → الثلثان
         return new InheritanceShareDto(
-                null,
                 HeirType.FULL_SISTER,
+                c.count(HeirType.FULL_SISTER),
+                null,
+                null,
                 ShareType.FIXED,
-                FixedShare.TWO_THIRDS,
-                "للأخوات الشقيقات الثلثان عند الكلالة"
+                fixedShare,
+                "للأخت الشقيقة فرضها عند الكلالة"
         );
     }
 }

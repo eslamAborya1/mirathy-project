@@ -8,70 +8,69 @@ import org.springframework.stereotype.Component;
 @Component
 public class DaughterOfSonRule implements InheritanceRule {
 
+
     @Override
     public boolean canApply(InheritanceCase c) {
-
-        // محجوبة بوجود الابن
+        // لا تنطبق إذا يوجد ابن صلب
         if (c.has(HeirType.SON)) return false;
+
+        // لا تنطبق إذا يوجد ابنتان صليبيتان فأكثر يستوفين الثلثين
+        int daughterCount = c.count(HeirType.DAUGHTER);
+        if (daughterCount >= 2) {
+            // تحقق: هل الابنتان يأخذان الثلثين بالكامل؟
+            // إذا كان معهما بنت ابن، قد تكمل الثلثين
+            return true; // نترك التفاصيل للدالة calculate
+        }
 
         return c.has(HeirType.DAUGHTER_OF_SON);
     }
 
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
+        HeirType heirType = HeirType.DAUGHTER_OF_SON;
+        int count = c.count(heirType);
+        ShareType shareType = null;
+        FixedShare fixedShare = null;
+        String reason = "";
 
-        int daughtersOfSon = c.count(HeirType.DAUGHTER_OF_SON);
+        int daughterCount = c.count(HeirType.DAUGHTER);
 
-        // مع وجود ابن ابن → تعصيب
+        // 1. مع ابن الابن: تعصيب
         if (c.has(HeirType.SON_OF_SON)) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.DAUGHTER_OF_SON,
-                    ShareType.TAASIB,
-                    null,
-                    "بنت الابن ترث تعصيبًا مع ابن الابن"
-            );
+            shareType = ShareType.TAASIB;
+            reason = "بنت الابن ترث تعصيبًا مع ابن الابن للذكر مثل حظ الأنثيين لقوله تعالى (يُوصِيكُمُ اللَّهُ فِي أَوْلادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ) ،ولا فرق بين أن يكون ابن الإبن اخ لبنت الإبن أوابن عمها";
+        }
+        // 2. مع بنت واحدة: تكملة الثلثين
+        else if (daughterCount == 1 && count >= 1) {
+            shareType = ShareType.FIXED;
+            fixedShare = FixedShare.SIXTH;
+            reason = "بنت الابن ترث السدس تكملة للثلثين مع البنت الصلبية";
+        }
+        // 3. بدون بنت صلبية
+        else if (daughterCount == 0) {
+            if (count == 1) {
+                shareType = ShareType.FIXED;
+                fixedShare = FixedShare.HALF;
+                reason = "بنت الابن ترث النصف إذا انفردت";
+            } else if (count >= 2) {
+                shareType = ShareType.FIXED;
+                fixedShare = FixedShare.TWO_THIRDS;
+                reason = "لبنات الابن الثلثان لاشتراكهن";
+            }
+        }
+        // 4. مع ابنتين صليبيتين: تحجب إذا استوفتا الثلثين
+        else if (daughterCount >= 2) {
+            // هنا قد تحجب أو تأخذ البقية
+            shareType = ShareType.TAASIB;
+            reason = "بنت الابن ترث بالتعصيب مع البنات الصليبيات";
         }
 
-        // وجود بنت مباشرة واحدة → السدس تكملة للثلثين
-        if (c.count(HeirType.DAUGHTER) == 1) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.DAUGHTER_OF_SON,
-                    ShareType.FIXED,
-                    FixedShare.SIXTH,
-                    "بنت الابن ترث السدس تكملة للثلثين مع البنت"
-            );
-        }
-
-        // وجود بنتين مباشرتين أو أكثر → محجوبة
-        if (c.count(HeirType.DAUGHTER) >= 2) {
-            return new InheritanceShareDto(
-                    0.0,
-                    HeirType.DAUGHTER_OF_SON,
-                    ShareType.Mahgub,
-                    null,
-                    "بنت الابن محجوبة لوجود بنتين فأكثر"
-            );
-        }
-
-        // لا بنات ولا أبناء
-        if (daughtersOfSon == 1) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.DAUGHTER_OF_SON,
-                    ShareType.FIXED,
-                    FixedShare.HALF,
-                    "لبنت الابن النصف لانفرادها"
-            );
+        if (shareType == null) {
+            return null;
         }
 
         return new InheritanceShareDto(
-                null,
-                HeirType.DAUGHTER_OF_SON,
-                ShareType.FIXED,
-                FixedShare.TWO_THIRDS,
-                "لبنات الابن الثلثان لاشتراكهن"
+                heirType, count, null, null, shareType, fixedShare, reason
         );
     }
 }

@@ -1,13 +1,9 @@
 package com.NTG.mirathy.rule;
 
 import com.NTG.mirathy.DTOs.InheritanceShareDto;
-import com.NTG.mirathy.Entity.Enum.FixedShare;
-import com.NTG.mirathy.Entity.Enum.HeirType;
-import com.NTG.mirathy.Entity.Enum.ShareType;
+import com.NTG.mirathy.Entity.Enum.*;
 import com.NTG.mirathy.util.InheritanceCase;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 
 @Component
 public class FatherRule implements InheritanceRule {
@@ -19,18 +15,29 @@ public class FatherRule implements InheritanceRule {
 
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
+        HeirType heirType = HeirType.FATHER;
+        int count = c.count(heirType);
+        ShareType shareType = null;
+        FixedShare fixedShare = null;
+        String reason = "";
 
         if (c.hasDescendant()) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.FATHER,
-                    ShareType.FIXED,
-                    FixedShare.SIXTH,
-                    "الأب يرث السدس لوجود فرع وارث"
-            );
+            shareType = ShareType.FIXED;
+            fixedShare = FixedShare.SIXTH;
+            reason = "يرث الأب السدس فقط فى حالة وجود الفرع الوارث المذكر (مثل الابن وابن الابن ). قال تعالى (وَلأَبَوَيْهِ لِكُلِّ وَاحِدٍ مِنْهُمَا السُّدُسُ مِمَّا تَرَكَ إِنْ كَانَ لَهُ وَلَدٌ)";
+        } else {
+            shareType = ShareType.TAASIB;
+            reason = "الأب يرث تعصيبًا بعد أصحاب الفروض";
         }
 
-        // التعصيب سيضاف لاحقًا في السيرفيس
-        return null;
+        return new InheritanceShareDto(
+                heirType,
+                count,
+                null,
+                null,
+                shareType,
+                fixedShare,
+                reason
+        );
     }
 }

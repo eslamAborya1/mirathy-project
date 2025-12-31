@@ -10,37 +10,21 @@ public class FullBrotherRule implements InheritanceRule {
 
     @Override
     public boolean canApply(InheritanceCase c) {
-
-        // محجوب بالأصل الوارث من الذكور
         if (c.has(HeirType.FATHER) || c.has(HeirType.GRANDFATHER)) return false;
-
-        // محجوب بالفرع الوارث الذكر
         if (c.has(HeirType.SON) || c.has(HeirType.SON_OF_SON)) return false;
-
         return c.has(HeirType.FULL_BROTHER);
     }
 
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
-
-        // مع أخت شقيقة → تعصيب
-        if (c.has(HeirType.FULL_SISTER)) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.FULL_BROTHER,
-                    ShareType.TAASIB,
-                    null,
-                    "الأخ الشقيق يرث تعصيبًا مع الأخت الشقيقة للذكر مثل حظ الأنثيين"
-            );
-        }
-
-        // منفرد أو مع أصحاب فروض → عصبة يأخذ الباقي
         return new InheritanceShareDto(
-                null,
                 HeirType.FULL_BROTHER,
+                c.count(HeirType.FULL_BROTHER),
+                null,
+                null,
                 ShareType.TAASIB,
                 null,
-                "الأخ الشقيق من العصبات بالنفس يرث ما بقي بعد أصحاب الفروض"
+                "الأخ الشقيق من العصبات : الأخوة الأشقاء رجالاً ونساء يرثون معاً بالتعصيب للذكر مثل حظ الأنثيين .قال تعالى ( وَإِن كَانُواْ إِخْوَةً رِّجَالاً وَنِسَاء فَلِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ) ، ويشترط لذلك أن تكون المسألة كلالة أى لا يكون هناك ولد - مثل الإبن الصلبى وابن الإبن وإن نزل - ولا والد - الأب فقط عند الجمهور - وإلا حجبوا بهم"
         );
     }
 }

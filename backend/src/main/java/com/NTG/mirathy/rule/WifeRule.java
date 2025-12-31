@@ -5,8 +5,6 @@ import com.NTG.mirathy.Entity.Enum.*;
 import com.NTG.mirathy.util.InheritanceCase;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Component
 public class WifeRule implements InheritanceRule {
 
@@ -17,18 +15,26 @@ public class WifeRule implements InheritanceRule {
 
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
-        FixedShare share = c.hasDescendant()
-                ? FixedShare.EIGHTH
-                : FixedShare.QUARTER;
+        HeirType heirType = HeirType.WIFE;
+        int count = c.count(heirType);
+        ShareType shareType = ShareType.FIXED;
+        FixedShare fixedShare = c.hasDescendant() ? FixedShare.EIGHTH : FixedShare.QUARTER;
+        String reason = "";
+
+        if (c.hasDescendant()) {
+            reason = "ترث الزوجة من زوجها الثمن إن كان له فرع وارث سواء كان منها أو من غيرها، والفرع الوارث هم: (( الأولاد بنون أو بنات، وأولاد الأبناء وإن نزلوا )) أما أولاد البنات فهم فروع غير وارثين. قال الله تعالى: ( فَإِنْ كَانَ لَكُمْ وَلَدٌ فَلَهُنَّ الثُّمُنُ مِمَّا تَرَكْتُمْ ..) .";
+        } else {
+            reason = "ترث الزوجة الربع لعدم وجود فرع وارث";
+        }
 
         return new InheritanceShareDto(
+                heirType,
+                count,
                 null,
-                HeirType.WIFE,
-                ShareType.FIXED,
-                share,
-                c.hasDescendant()
-                        ? "للزوجات الثمن لوجود فرع وارث"
-                        : "للزوجات الربع لعدم وجود فرع وارث"
+                null,
+                shareType,
+                fixedShare,
+                reason
         );
     }
 }

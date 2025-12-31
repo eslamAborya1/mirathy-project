@@ -10,37 +10,33 @@ public class GrandmotherPaternalRule implements InheritanceRule {
 
     @Override
     public boolean canApply(InheritanceCase c) {
-
-        // لو مفيش جدة لأب → القاعدة مش مطبقة
         if (!c.has(HeirType.GRANDMOTHER_PATERNAL)) return false;
-
-        // محجوبة بوجود الأب أو الجد للأب
         if (c.has(HeirType.FATHER) || c.has(HeirType.GRANDFATHER)) return false;
-
         return true;
     }
 
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
+        HeirType heirType = HeirType.GRANDMOTHER_PATERNAL;
+        int count = c.count(heirType);
+        ShareType shareType = ShareType.FIXED;
+        FixedShare fixedShare = FixedShare.SIXTH;
+        String reason = "";
 
-        // وجود جدة لأم أيضًا → كلاهما يشتركان في السدس
         if (c.has(HeirType.GRANDMOTHER_MATERNAL)) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.GRANDMOTHER_PATERNAL,
-                    ShareType.FIXED,
-                    FixedShare.SIXTH,
-                    "الجدة لأب تشترك مع الجدة لأم في السدس"
-            );
+            reason = "الجدة للأب تشترك مع الجدة للأم في السدس";
+        } else {
+            reason = "الجدة للأب ترث السدس لعدم وجود الأب أو الجد";
         }
 
-        // إذا كانت وحدها → السدس
         return new InheritanceShareDto(
+                heirType,
+                count,
                 null,
-                HeirType.GRANDMOTHER_PATERNAL,
-                ShareType.FIXED,
-                FixedShare.SIXTH,
-                "الجدة لأب ترث السدس لعدم وجود الأب أو الجد للأب"
+                null,
+                shareType,
+                fixedShare,
+                null
         );
     }
 }

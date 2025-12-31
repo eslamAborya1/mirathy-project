@@ -10,65 +10,43 @@ public class PaternalSisterRule implements InheritanceRule {
 
     @Override
     public boolean canApply(InheritanceCase c) {
-
-        // لو مفيش أخت لأب → القاعدة مش مطبقة
         if (!c.has(HeirType.PATERNAL_SISTER)) return false;
-
-        // تحجبها الحالات التالية
-        if (c.has(HeirType.FATHER) || c.has(HeirType.SON) || c.has(HeirType.SON_OF_SON) || c.has(HeirType.FULL_BROTHER)) {
+        if (c.has(HeirType.FATHER) || c.has(HeirType.SON) ||
+                c.has(HeirType.SON_OF_SON) || c.has(HeirType.FULL_BROTHER)) {
             return false;
         }
-
         return true;
     }
 
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
+        HeirType heirType = HeirType.PATERNAL_SISTER;
+        int count = c.count(heirType);
+        ShareType shareType = null;
+        FixedShare fixedShare = null;
+        String reason = "";
 
-        int sisters = c.count(HeirType.PATERNAL_SISTER);
-        boolean hasFullSister = c.has(HeirType.FULL_SISTER);
-        boolean hasPaternalBrothers = c.has(HeirType.PATERNAL_BROTHER);
-
-        // إذا كانت مع شقيقة → التعصيب بعد فرض الشقيقة
-        if (hasFullSister) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.PATERNAL_SISTER,
-                    ShareType.TAASIB,
-                    null,
-                    "الأخت لأب ترث تعصيبًا بعد فرض الأخت الشقيقة"
-            );
+        if (c.has(HeirType.FULL_SISTER) || c.has(HeirType.PATERNAL_BROTHER)) {
+            shareType = ShareType.TAASIB;
+            reason = "الأخت لأب ترث تعصيبًا مع الإخوة";
+        } else if (count == 1) {
+            shareType = ShareType.FIXED;
+            fixedShare = FixedShare.HALF;
+            reason = "الأخت لأب تأخذ نصف إذا انفردت";
+        } else {
+            shareType = ShareType.FIXED;
+            fixedShare = FixedShare.TWO_THIRDS;
+            reason = "الأخوات لأب يأخذن الثلثين إذا كن اثنتين فأكثر";
         }
 
-        // إذا كانت مع إخوة لأب → التعصيب
-        if (hasPaternalBrothers) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.PATERNAL_SISTER,
-                    ShareType.TAASIB,
-                    null,
-                    "الأخت لأب ترث تعصيبًا مع الإخوة لأب"
-            );
-        }
-
-        // فرض: واحدة → نصف
-        if (sisters == 1) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.PATERNAL_SISTER,
-                    ShareType.FIXED,
-                    FixedShare.HALF,
-                    "الأخت لأب تأخذ نصف إذا انفردت"
-            );
-        }
-
-        // فرض: اثنتان فأكثر → الثلثان
         return new InheritanceShareDto(
+                heirType,
+                count,
                 null,
-                HeirType.PATERNAL_SISTER,
-                ShareType.FIXED,
-                FixedShare.TWO_THIRDS,
-                "الأخوات لأب يأخذن الثلثين إذا كن اثنتين فأكثر"
+                null,
+                shareType,
+                fixedShare,
+                reason
         );
     }
 }

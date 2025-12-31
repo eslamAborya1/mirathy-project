@@ -13,7 +13,7 @@ public record FullInheritanceResponse(
 ) {
     public Double getTotalDistributed() {
         return shares.stream()
-                .mapToDouble(InheritanceShareDto::amount)
+                .mapToDouble(InheritanceShareDto::totalAmount)
                 .sum();
     }
 }

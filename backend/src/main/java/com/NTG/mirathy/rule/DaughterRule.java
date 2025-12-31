@@ -5,37 +5,47 @@ import com.NTG.mirathy.Entity.Enum.*;
 import com.NTG.mirathy.util.InheritanceCase;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Component
 public class DaughterRule implements InheritanceRule {
 
     @Override
     public boolean canApply(InheritanceCase c) {
-        return c.has(HeirType.DAUGHTER) && !c.has(HeirType.SON);
+        // تنطبق إذا فيه بنت واحدة أو أكثر
+        return c.has(HeirType.DAUGHTER);
     }
 
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
+        HeirType heirType = HeirType.DAUGHTER;
+        int count = c.count(heirType);
+        ShareType shareType;
+        FixedShare fixedShare = null;
+        String reason = "";
 
-        int daughters = c.count(HeirType.DAUGHTER);
-
-        if (daughters == 1) {
-            return new InheritanceShareDto(
-                    null,
-                    HeirType.DAUGHTER,
-                    ShareType.FIXED,
-                    FixedShare.HALF,
-                    "للبنت النصف لانفرادها"
-            );
+        if (c.has(HeirType.SON)) {
+            // تعصيب مع الابن
+            shareType = ShareType.TAASIB;
+            reason = "يرث الأبناء الذكور والإناث معا تعصيبا للذكر مثل حظ الأنثيين لقوله تعالى (يُوصِيكُمُ اللَّهُ فِي أَوْلادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ)";
+        } else {
+            // بدون ابن → فرض ثابت
+            shareType = ShareType.FIXED;
+            if (count == 1) {
+                fixedShare = FixedShare.HALF;
+                reason = "ترث البنت الواحدة النصف إذا لم يكن لها أخ يعصبها";
+            } else {
+                fixedShare = FixedShare.TWO_THIRDS;
+                reason = "ترث البنتين فأكثر الثلثين إذا لم يكن لهن أخ يعصبهن. لقوله تعالى (يُوصِيكُمُ اللَّهُ فِي أَوْلادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ فَإِنْ كُنَّ نِسَاءً فَوْقَ اثْنَتَيْنِ فَلَهُنَّ ثُلُثَا مَا تَرَكَ وَإِنْ كَانَتْ وَاحِدَةً فَلَهَا النِّصْفُ) ولأنه ﷺ أعطى الثلثين لبنتى سعد بن الربيع، و الاثنتين لهما حكم فوق اثنتين لأن القرآن أيضا ذكر حُكم الأختين أن لهما الثلثين (فَإِن كَانَتَا اثْنَتَيْنِ فَلَهُمَا الثُّلُثَانِ مِمَّا تَرَكَ) فيتم حمل البنتين على الأختين ، وكذلك حمل الأكثر من أختين على قوله فى البنات (فَوْقَ اثْنَتَيْنِ).";
+            }
         }
 
         return new InheritanceShareDto(
+                heirType,
+                count,
                 null,
-                HeirType.DAUGHTER,
-                ShareType.FIXED,
-                FixedShare.TWO_THIRDS,
-                "للبنات الثلثان لاشتراكهن"
+                null,
+                shareType,
+                fixedShare,
+                reason
         );
     }
 }
