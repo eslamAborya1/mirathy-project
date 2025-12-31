@@ -51,9 +51,7 @@ public enum HeirType {
     private final String arabicName;
     private final Integer MAX_ALLOWED;
 
-    /* =================================================
-       🔥 منطق التعصيب (الإضافة المهمة)
-    ================================================= */
+        //منطق التعصيب
 
     public boolean isTaasib() {
         return switch (this) {
@@ -82,7 +80,6 @@ public enum HeirType {
     public int getUnit() {
         return switch (this) {
 
-            // 👨‍🦱 الذكور = 2
             case SON,
                  SON_OF_SON,
                  FULL_BROTHER,
@@ -95,7 +92,6 @@ public enum HeirType {
                  SON_OF_PATERNAL_UNCLE
                     -> 2;
 
-            // 👩‍🦱 الإناث = 1
             case DAUGHTER,
                  DAUGHTER_OF_SON,
                  FULL_SISTER,

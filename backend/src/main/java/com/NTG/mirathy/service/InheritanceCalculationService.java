@@ -36,9 +36,7 @@ public class InheritanceCalculationService {
 
         BigDecimal netEstate = c.getNetEstate();
 
-        /* =========================
-           1️⃣ تطبيق القواعد
-        ========================= */
+         //   تطبيق القواعد
         List<InheritanceShareDto> allShares = new ArrayList<>();
         for (InheritanceRule rule : rules) {
             if (rule.canApply(c)) {
@@ -49,9 +47,8 @@ public class InheritanceCalculationService {
             }
         }
 
-        /* =========================
-           2️⃣ فصل الفروض عن العصبات
-        ========================= */
+       //فصل الفروض عن العصبات
+
         List<InheritanceShareDto> fixedShares = new ArrayList<>();
         List<InheritanceShareDto> asabaShares = new ArrayList<>();
 
@@ -63,18 +60,14 @@ public class InheritanceCalculationService {
             }
         }
 
-        /* =========================
-           3️⃣ حساب أصل المسألة
-        ========================= */
+        //حساب اصل المسأله
         int origin = calculateOrigin(fixedShares);
 
         Map<HeirType, InheritanceShareDto> dtoMap = new LinkedHashMap<>();
         Map<HeirType, BigDecimal> sharesMap = new LinkedHashMap<>();
         Map<HeirType, Integer> countMap = new LinkedHashMap<>();
 
-        /* =========================
-           4️⃣ توزيع الفروض
-        ========================= */
+       //توزيع الفروض الثابتة
         for (InheritanceShareDto dto : fixedShares) {
             if (dto.fixedShare() == null || dto.count() == 0) continue;
 
@@ -89,31 +82,23 @@ public class InheritanceCalculationService {
             sharesMap.put(dto.heirType(), shareUnits);
             countMap.put(dto.heirType(), dto.count());
         }
-
-        /* =========================
-           5️⃣ حساب الباقي
-        ========================= */
+        //حساب المجموع الحالي للفروض
         BigDecimal fixedSum = sharesMap.values()
                 .stream()
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal remaining = BigDecimal.valueOf(origin).subtract(fixedSum);
 
-        /* =========================
-           6️⃣ توزيع التعصيب (عام)
-        ========================= */
+        //توزيع العصبات
+
         if (remaining.compareTo(BigDecimal.ZERO) > 0 && !asabaShares.isEmpty()) {
             distributeAsaba(c, asabaShares, dtoMap, countMap, sharesMap, remaining);
         }
 
-        /* =========================
-           7️⃣ العول أو الرد
-        ========================= */
+        //تطبيق العول والرد
         applyAwlAndRadd(sharesMap, dtoMap, origin);
 
-        /* =========================
-           8️⃣ تحويل الأسهم لمبالغ
-        ========================= */
+        //تحويل الاسهم الى مبالغ
         BigDecimal shareValue =
                 netEstate.divide(BigDecimal.valueOf(origin), 10, RoundingMode.HALF_UP);
 
@@ -145,12 +130,7 @@ public class InheritanceCalculationService {
         );
     }
 
-    /* ============================================================
-       توزيع العصبات — قاعدة واحدة لكل:
-       ابن / بنت
-       أخ / أخت
-       ابن ابن / بنت ابن
-    ============================================================ */
+      //توزيع العصبات
     private void distributeAsaba(
             InheritanceCase c,
             List<InheritanceShareDto> asabaShares,
@@ -197,9 +177,7 @@ public class InheritanceCalculationService {
         }
     }
 
-    /* =========================
-       العول والرد
-    ========================= */
+    //تطبيق العول والرد
     private void applyAwlAndRadd(
             Map<HeirType, BigDecimal> sharesMap,
             Map<HeirType, InheritanceShareDto> dtoMap,
@@ -212,7 +190,7 @@ public class InheritanceCalculationService {
 
         BigDecimal originBD = BigDecimal.valueOf(origin);
 
-        // 🔺 العول
+        //  العول
         if (total.compareTo(originBD) > 0) {
             for (HeirType type : sharesMap.keySet()) {
                 BigDecimal adjusted =
@@ -223,7 +201,7 @@ public class InheritanceCalculationService {
             }
         }
 
-        // 🔻 الرد
+        //  الرد
         else if (total.compareTo(originBD) < 0) {
 
             BigDecimal remaining = originBD.subtract(total);
@@ -248,7 +226,6 @@ public class InheritanceCalculationService {
         }
     }
 
-    /* ========================= */
     private int calculateOrigin(List<InheritanceShareDto> shares) {
         return shares.stream()
                 .map(InheritanceShareDto::fixedShare)
