@@ -1,5 +1,6 @@
 package com.NTG.mirathy.controller;
 
+import com.NTG.mirathy.DTOs.InheritanceCalculationResult;
 import com.NTG.mirathy.DTOs.request.InheritanceCalculationRequest;
 import com.NTG.mirathy.DTOs.request.ProblemReportRequest;
 import com.NTG.mirathy.DTOs.response.InheritanceMemberResponse;
@@ -13,13 +14,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class UserController {
     private final InheritanceCalculationService inheritanceCalculationService;
     private final ProblemReportService problemReportService;
     @GetMapping("calculate")
-    public InheritanceMemberResponse calculate(@Valid @RequestBody InheritanceCalculationRequest request){
+    public InheritanceCalculationResult calculate(@Valid @RequestBody InheritanceCalculationRequest request){
         return inheritanceCalculationService.calculateProblem(request);
     }
     @PostMapping("submit-report")

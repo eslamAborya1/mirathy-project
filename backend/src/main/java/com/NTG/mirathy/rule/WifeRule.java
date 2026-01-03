@@ -25,7 +25,6 @@ public class WifeRule implements InheritanceRule {
         TaaasibRule taaasibRule=null;
         String reason=null;
 
-
         if(c.hasDescendant()){
             share = FixedShare.EIGHTH;
             reason="ترث الزوجة من زوجها الثمن إن كان له فرع وارث سواء كان منها أو من غيرها، والفرع الوارث هم: (( الأولاد بنون أو بنات، وأولاد الأبناء وإن نزلوا )) أما أولاد البنات فهم فروع غير وارثين. قال الله تعالى: ( فَإِنْ كَانَ لَكُمْ وَلَدٌ فَلَهُنَّ الثُّمُنُ مِمَّا تَرَكْتُمْ ..) .";

@@ -2,9 +2,9 @@ package com.NTG.mirathy.DTOs;
 
 import java.util.List;
 
-public record InheritanceCalculationResult(
+public record ProblemResult(
         String title,
         String note,
-        List<InheritanceResult> shares
+        List<InheritanceResult>inheritanceResults
 ) {
 }

@@ -12,7 +12,7 @@ public enum TaaasibRule {
     ),
 
     MALE_TWICE_FEMALE_REMAINDER(
-            "يرثون باقي التركة تعصبا للذكر مثل حظ الأنثيين"
+            "للذكر مثل حظ الأنثيين"
     ),
 
     // تعصيب بدون تفضيل

@@ -22,8 +22,8 @@ public class InheritanceMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private HeirType memberType; // son, daughter, wife ...
+
+    private String memberType; // son, daughter, wife ...
 
 
     @Column(name = "share_description")

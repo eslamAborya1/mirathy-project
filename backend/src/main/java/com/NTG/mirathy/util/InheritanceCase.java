@@ -40,8 +40,9 @@ public class InheritanceCase {
     }
 
     public boolean hasMaleChild() {
-        return has(HeirType.SON)|| has(HeirType.SON_OF_SON);
+        return has(HeirType.SON) || has(HeirType.SON_OF_SON);
     }
+
     public boolean hasFemaleChild() {
         return has(HeirType.DAUGHTER) || has(HeirType.DAUGHTER_OF_SON);
     }
@@ -60,6 +61,11 @@ public class InheritanceCase {
         return totalEstate.subtract(debts).subtract(will);
     }
 
-
+    public int siblingCount(InheritanceCase c) {
+        int fullSiblingsCount = 0;
+        fullSiblingsCount += c.count(HeirType.FULL_BROTHER);
+        fullSiblingsCount += c.count(HeirType.FULL_SISTER);
+        return fullSiblingsCount;
+    }
 
 }

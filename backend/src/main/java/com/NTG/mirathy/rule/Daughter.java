@@ -23,7 +23,7 @@ public class Daughter implements InheritanceRule {
         FixedShare fixedShare=null;
         ShareType shareType=null;
         TaaasibRule taaasibRule = null;
-        if (c.hasMaleChild()) {
+        if (c.has(HeirType.SON)) {
             shareType = ShareType.TAASIB;
             taaasibRule = (c.totalNumberOfHeirs() == 2) ? TaaasibRule.MALE_TWICE_FEMALE_ALL :
                     TaaasibRule.MALE_TWICE_FEMALE_REMAINDER;
