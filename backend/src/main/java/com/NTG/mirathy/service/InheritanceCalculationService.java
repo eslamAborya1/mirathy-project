@@ -6,9 +6,11 @@ import com.NTG.mirathy.DTOs.response.FullInheritanceResponse;
 import com.NTG.mirathy.Entity.Enum.FixedShare;
 import com.NTG.mirathy.Entity.Enum.HeirType;
 import com.NTG.mirathy.Entity.Enum.ShareType;
+import com.NTG.mirathy.Entity.User;
 import com.NTG.mirathy.exceptionHandler.InvalidInheritanceCaseException;
 import com.NTG.mirathy.rule.InheritanceRule;
 import com.NTG.mirathy.util.InheritanceCase;
+import com.NTG.mirathy.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ public class InheritanceCalculationService {
 
     private final List<InheritanceRule> rules;
     private final ArabicInheritanceTextService arabicInheritanceTextService;
+    private final InheritanceProblemService  inheritanceProblemService;
+    private final SecurityUtil securityUtil;
 
     public FullInheritanceResponse calculateProblem(InheritanceCalculationRequest request) {
 
@@ -153,13 +157,23 @@ public class InheritanceCalculationService {
             );
         }
 
-        return new FullInheritanceResponse(
+        FullInheritanceResponse response= new FullInheritanceResponse(
                 arabicInheritanceTextService.generateText(request),
                 request.totalEstate().doubleValue(),
                 netEstate.doubleValue(),
                 finalShares,
                 0.0
         );
+
+        User currentUser = securityUtil.getCurrentUser();
+        if (getCurrentUser()!=null) {
+            inheritanceProblemService.saveInheritanceProblem(response,currentUser);
+        }
+
+        return response;
+    }
+    private User getCurrentUser() {
+        return securityUtil.getCurrentUser();
     }
 
       //توزيع العصبات

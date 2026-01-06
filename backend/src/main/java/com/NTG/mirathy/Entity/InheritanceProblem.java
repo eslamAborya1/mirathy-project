@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "inheritance_problem")
@@ -22,22 +24,23 @@ public class InheritanceProblem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     private String title;
 
+    private Double totalEstate;
 
-    private Double totalValue;
-
-
+    private Double netEstate;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     private Boolean isFavorite = false;
-
     private Boolean isDeleted = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+
+    @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InheritanceMember> members = new ArrayList<>();
 }

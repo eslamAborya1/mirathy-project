@@ -18,27 +18,29 @@ import lombok.Setter;
 @AllArgsConstructor
 public class InheritanceMember {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private HeirType memberType; // son, daughter, wife ...
+    private HeirType memberType;
 
     @Enumerated(EnumType.STRING)
-    private ShareType shareFraction;
+    private ShareType shareType;
 
     @Enumerated(EnumType.STRING)
     private FixedShare fixedShare;
 
-    private Double shareValue;
-
-
-    private String description;
+    private Double amountPerPerson;
+    private Double totalAmount;
 
     private Integer memberCount;
 
-    @ManyToOne
+    @Column(length = 1000)
+    private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id", nullable = false)
     private InheritanceProblem problem;
 }
