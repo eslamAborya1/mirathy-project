@@ -16,7 +16,7 @@ public class HusbandRule implements InheritanceRule {
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
         HeirType heirType = HeirType.HUSBAND;
-        int count = c.count(heirType);
+        int count = 1;
         ShareType shareType = ShareType.FIXED;
         FixedShare fixedShare = c.hasDescendant() ? FixedShare.QUARTER : FixedShare.HALF;
         String reason = "";

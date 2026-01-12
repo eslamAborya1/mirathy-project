@@ -10,14 +10,15 @@ public class GrandmotherMaternalRule implements InheritanceRule {
 
     @Override
     public boolean canApply(InheritanceCase c) {
-        if (!c.has(HeirType.GRANDMOTHER_MATERNAL)) return false;
+        if (!c.has(HeirType.GRANDMOTHER_MATERNAL))
+            return false;
         return !c.has(HeirType.MOTHER);
     }
 
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
         HeirType heirType = HeirType.GRANDMOTHER_MATERNAL;
-        int count = c.count(heirType);
+        int count = 1;
         ShareType shareType = ShareType.FIXED;
         FixedShare fixedShare = FixedShare.SIXTH;
         String reason = "";

@@ -17,7 +17,7 @@ public class MotherRule implements InheritanceRule {
     public InheritanceShareDto calculate(InheritanceCase c) {
 
         HeirType heirType = HeirType.MOTHER;
-        int count = c.count(heirType);
+        int count = 1;
         ShareType shareType = ShareType.FIXED;
         FixedShare fixedShare;
         String reason;

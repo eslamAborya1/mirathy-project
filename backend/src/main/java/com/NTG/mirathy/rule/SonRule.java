@@ -18,6 +18,8 @@ public class SonRule implements InheritanceRule {
         HeirType heirType = HeirType.SON;
         int count = c.count(heirType);
         ShareType shareType = ShareType.TAASIB;
+        FixedShare fixedShare = null;  // ⚠️ مهم: null
+
         String reason = "يرث الأبناء الذكور والإناث معا تعصيبا للذكر مثل حظ الأنثيين لقوله تعالى (يُوصِيكُمُ اللَّهُ فِي أَوْلادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ)";
 
         return new InheritanceShareDto(
@@ -26,7 +28,7 @@ public class SonRule implements InheritanceRule {
                 null,
                 null,
                 shareType,
-                null,
+                fixedShare,  // ⚠️ null
                 reason
         );
     }

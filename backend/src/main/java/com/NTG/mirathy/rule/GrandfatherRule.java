@@ -16,7 +16,7 @@ public class GrandfatherRule implements InheritanceRule {
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
         HeirType heirType = HeirType.GRANDFATHER;
-        int count = c.count(heirType);
+        int count = 1;
         ShareType shareType = null;
         FixedShare fixedShare = null;
         String reason = "";

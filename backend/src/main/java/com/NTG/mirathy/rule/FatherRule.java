@@ -17,7 +17,7 @@ public class FatherRule implements InheritanceRule {
     @Override
     public InheritanceShareDto calculate(InheritanceCase c) {
 
-        int count = c.count(HeirType.FATHER);
+        int count = 1;
 
         // وجود فرع وارث
         if (c.hasDescendant()) {
