@@ -18,9 +18,17 @@ public class SonOfSonRule implements InheritanceRule {
     public InheritanceShareDto calculate(InheritanceCase c) {
         HeirType heirType = HeirType.SON_OF_SON;
         int count = c.count(heirType);
-        ShareType shareType = ShareType.TAASIB;
-        String reason = "ابن الابن يرث تعصيبًا لعدم وجود الابن";
+        ShareType shareType ;
+        String reason ;
 
+        if (c.has(HeirType.DAUGHTER)) {
+            shareType = ShareType.TAASIB; // يرث الباقي بعد فرض البنت
+            reason = "ابن الابن يرث الباقي بعد فرض البنت لأنه أقل درجة منها";
+        }
+        else {
+            shareType = ShareType.TAASIB;
+            reason = "ابن الابن يرث تعصيبًا لعدم وجود الابن أو البنت الصلب";
+        }
         return new InheritanceShareDto(
                 heirType,
                 count,

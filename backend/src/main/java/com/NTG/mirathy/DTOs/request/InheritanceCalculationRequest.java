@@ -27,4 +27,10 @@ public record InheritanceCalculationRequest(
                 @NotNull(message = "Heir count must not be null")
                         Integer> heirs
 ) {
+
+        public BigDecimal netEstate() {
+                return totalEstate
+                        .subtract(debts)
+                        .subtract(will);
+        }
 }
