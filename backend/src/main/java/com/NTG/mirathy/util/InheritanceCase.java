@@ -51,7 +51,7 @@ public class InheritanceCase {
     }
 
     public boolean hasMaleChild() {
-        return has(HeirType.SON);
+        return has(HeirType.SON) || has(HeirType.SON_OF_SON);
     }
 
     public boolean hasFemaleChild() {

@@ -9,7 +9,10 @@ import java.util.List;
 
 public class InheritanceUtils {
 
-    public static List<InheritanceShareDto> roundShares(List<InheritanceShareDto> shares) {
+    public static List<InheritanceShareDto> roundShares(
+            List<InheritanceShareDto> shares,
+            double netEstate
+    ) {
 
         // 1️⃣ تقريب القيم الأساسية
         for (int i = 0; i < shares.size(); i++) {
@@ -21,18 +24,13 @@ public class InheritanceUtils {
             shares.set(i, s.withAmounts(perPerson, total));
         }
 
-        // 2️⃣ مجموع التركة بعد التقريب
-        double netEstate =
-                shares.stream()
-                        .mapToDouble(InheritanceShareDto::totalAmount)
-                        .sum();
-
-        // 3️⃣ حساب الفرق بين المجموع والحساب الأصلي
+        // 2️⃣ مجموع الأنصبة بعد التقريب
         double totalAfterRound =
                 shares.stream()
                         .mapToDouble(InheritanceShareDto::totalAmount)
                         .sum();
 
+        // 3️⃣ حساب الفرق الحقيقي
         double diff = round(netEstate - totalAfterRound, 2);
 
         if (Math.abs(diff) < 0.01) return shares;

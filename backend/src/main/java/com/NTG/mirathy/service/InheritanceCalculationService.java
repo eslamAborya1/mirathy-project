@@ -6,10 +6,12 @@ import com.NTG.mirathy.DTOs.response.FullInheritanceResponse;
 import com.NTG.mirathy.Entity.Enum.FixedShare;
 import com.NTG.mirathy.Entity.Enum.HeirType;
 import com.NTG.mirathy.Entity.Enum.ShareType;
+import com.NTG.mirathy.Entity.User;
 import com.NTG.mirathy.exceptionHandler.InvalidInheritanceCaseException;
 import com.NTG.mirathy.rule.InheritanceRule;
 import com.NTG.mirathy.util.InheritanceCase;
 import com.NTG.mirathy.util.InheritanceUtils;
+import com.NTG.mirathy.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ public class InheritanceCalculationService {
 
     private final List<InheritanceRule> rules;
     private final ArabicInheritanceTextService arabicInheritanceTextService;
+    private final SecurityUtil securityUtil;
+    private final InheritanceProblemService inheritanceProblemService;
 
     // ================== MAIN ==================
     public FullInheritanceResponse calculateProblem(InheritanceCalculationRequest request) {
@@ -111,12 +115,11 @@ public class InheritanceCalculationService {
         }
 
         // ================== AWL & RADD ==================
-        boolean isAwl = applyAwlAndRadd(sharesMap, dtoMap, origin);
-
+            boolean hasAsaba = !asaba.isEmpty();
+            boolean appliedAwl = applyAwlAndRadd(sharesMap, dtoMap, origin, hasAsaba);
         // ================== ASABA (ONLY IF NO AWL) ==================
-        if (!isAwl) {
+
             distributeAsaba(c, asaba, sharesMap, dtoMap, origin);
-        }
 
         // ================== CONVERT TO MONEY ==================
         BigDecimal unitValue =
@@ -144,15 +147,25 @@ public class InheritanceCalculationService {
             );
         }
 
-        List<InheritanceShareDto> roundedShares = InheritanceUtils.roundShares(finalShares);
+        List<InheritanceShareDto> roundedShares = InheritanceUtils.roundShares(finalShares , netEstate.doubleValue());
 
-        return new FullInheritanceResponse(
+        FullInheritanceResponse response= new FullInheritanceResponse(
                 arabicInheritanceTextService.generateText(request),
                 request.totalEstate().doubleValue(),
                 netEstate.doubleValue(),
                 roundedShares,
                 0.0
         );
+
+        User currentUser = securityUtil.getCurrentUser();
+        if (getCurrentUser()!=null) {
+            inheritanceProblemService.saveInheritanceProblem(response,currentUser);
+        }
+
+        return response;
+    }
+    private User getCurrentUser() {
+        return securityUtil.getCurrentUser();
     }
 
     // ================== ASABA ==================
@@ -218,7 +231,8 @@ public class InheritanceCalculationService {
     private boolean applyAwlAndRadd(
             Map<HeirType, BigDecimal> sharesMap,
             Map<HeirType, InheritanceShareDto> dtoMap,
-            int origin
+            int origin,
+            boolean hasAsaba
     ) {
 
         BigDecimal originBD = BigDecimal.valueOf(origin);
@@ -227,23 +241,32 @@ public class InheritanceCalculationService {
                 sharesMap.values().stream()
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        boolean appliedAwl = false;
         // ===== AWL =====
         if (total.compareTo(originBD) > 0) {
-
+            appliedAwl = true;
+            Map<HeirType, BigDecimal> originalRatios = new HashMap<>();
             for (HeirType type : sharesMap.keySet()) {
-                sharesMap.put(
+                originalRatios.put(
                         type,
                         sharesMap.get(type)
                                 .multiply(originBD)
-                                .divide(total, 10, RoundingMode.HALF_UP)
-                );
+                                .divide(total, 10, RoundingMode.HALF_UP));
+
             }
-            return true; // عَول حصل
+            for (HeirType type : sharesMap.keySet()) {
+                BigDecimal ratio = originalRatios.get(type);
+                sharesMap.put(type, originBD.multiply(ratio));
+            }
+
         }
 
         // ===== RADD =====
         if (total.compareTo(originBD) < 0) {
-
+            // لا رد مع وجود عصبة
+            if (hasAsaba) {
+                return appliedAwl;
+            }
             BigDecimal remainder = originBD.subtract(total);
             BigDecimal eligible = BigDecimal.ZERO;
 

@@ -142,7 +142,8 @@ export class HistoryComponent implements OnInit {
       'EIGHTH': 'الثمن',
       'THIRD': 'الثلث',
       'TWO_THIRDS': 'الثلثين',
-      'SIXTH': 'السدس'
+      'SIXTH': 'السدس',
+      'THIRD_OF_REMAINDER':'الثلث الباقى بعد فرض احد الزوجين'
     };
     return fixedShareMap[fixedShare] || fixedShare;
   }

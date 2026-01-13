@@ -21,7 +21,7 @@ public class DaughterRule implements InheritanceRule {
         String reason = "";
 
         if (c.has(HeirType.SON)) {
-            shareType = ShareType.TAASIB;
+            shareType = ShareType.MALE_DOUBLE_FEMALE;
             reason = "يرث الأبناء الذكور والإناث معا تعصيبا للذكر مثل حظ الأنثيين لقوله تعالى (يُوصِيكُمُ اللَّهُ فِي أَوْلادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ)";
             // ⚠️ fixedShare تبقى null! لأنها ليست فرضاً ثابتاً
         } else {

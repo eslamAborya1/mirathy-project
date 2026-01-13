@@ -238,17 +238,17 @@
                 <p class="text-lg font-bold text-emerald-900">{{ selectedCase()!.createdAt | date:'yyyy-MM-dd HH:mm' }}</p>
               </div>
 
-              <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-                <div class="flex items-center gap-3 mb-4">
-                  <div class="bg-amber-100 p-2.5 rounded-xl">
-                    <svg class="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                  </div>
-                  <p class="text-sm text-gray-600 font-medium">قيمة التركة</p>
-                </div>
-                <p class="text-2xl font-bold text-emerald-900">{{ selectedCase()!.estate | number:'1.2-2' }} <span class="text-sm text-gray-500">جنيه</span></p>
-              </div>
+<!--              <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow duration-300">-->
+<!--                <div class="flex items-center gap-3 mb-4">-->
+<!--                  <div class="bg-amber-100 p-2.5 rounded-xl">-->
+<!--                    <svg class="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+<!--                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>-->
+<!--                    </svg>-->
+<!--                  </div>-->
+<!--                  <p class="text-sm text-gray-600 font-medium">قيمة التركة</p>-->
+<!--                </div>-->
+<!--                <p class="text-2xl font-bold text-emerald-900">{{ selectedCase()!.estate | number:'1.2-2' }} <span class="text-sm text-gray-500">جنيه</span></p>-->
+<!--              </div>-->
 
               <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div class="flex items-center gap-3 mb-4">
@@ -312,7 +312,7 @@
                       <th class="text-right p-4 text-emerald-800 font-bold border-b border-emerald-100">الوارث</th>
                       <th class="text-center p-4 text-emerald-800 font-bold border-b border-emerald-100">العدد</th>
                       <th class="text-center p-4 text-emerald-800 font-bold border-b border-emerald-100">نوع الحصة</th>
-                      <th class="text-center p-4 text-emerald-800 font-bold border-b border-emerald-100">النسبة</th>
+
                       <th class="text-center p-4 text-emerald-800 font-bold border-b border-emerald-100">سبب الاستحقاق</th>
                     </tr>
                     </thead>
@@ -337,14 +337,7 @@
                     {{ getFixedShareArabicText(result.fixedShare) || getShareTypeArabicText(result.shareType) }}
                   </span>
                           </td>
-                          <td class="p-4 text-center border-b border-emerald-100">
-                            <div class="flex flex-col items-center">
-                              <span class="font-mono text-xl font-bold text-emerald-900">{{ result.shareValue }}%</span>
-                              <div class="w-24 h-2 bg-emerald-100 rounded-full mt-2 overflow-hidden">
-                                <div class="h-full bg-emerald-500 rounded-full" [style.width.%]="result.shareValue"></div>
-                              </div>
-                            </div>
-                          </td>
+
                           <td class="p-4 text-right border-b border-emerald-100 max-w-xs">
                             <p class="text-gray-700 leading-relaxed text-sm">{{ result.reason }}</p>
                           </td>
