@@ -92,32 +92,47 @@ public enum HeirType {
 
     /**
      * ترتيب العصبة (الأقوى أولًا)
+     * ⭐ هذا مهم جداً لفرز العصبات حسب الأقوى
      */
     public int getAsabaRank() {
         return switch (this) {
-            case SON -> 1;
-            case SON_OF_SON -> 2;
-            case FATHER -> 3;
-            case GRANDFATHER -> 4;
-            case FULL_BROTHER -> 5;
-            case FULL_SISTER -> 6;
-            case PATERNAL_BROTHER -> 7;
-            case PATERNAL_SISTER -> 8;
-            case SON_OF_FULL_BROTHER -> 9;
-            case SON_OF_PATERNAL_BROTHER -> 10;
-            case FULL_UNCLE -> 11;
-            case PATERNAL_UNCLE -> 12;
-            case SON_OF_FULL_UNCLE -> 13;
-            case SON_OF_PATERNAL_UNCLE -> 14;
-            default -> 100;
+            case SON -> 1;                      // الأقوى
+            case SON_OF_SON -> 2;               // الثاني
+            case FATHER -> 3;                   // الثالث
+            case GRANDFATHER -> 4;              // الرابع
+            case FULL_BROTHER -> 5;             // الخامس
+            case FULL_SISTER -> 6;              // السادس (مع الأخ)
+            case PATERNAL_BROTHER -> 7;         // السابع
+            case PATERNAL_SISTER -> 8;          // الثامن (مع الأخ لأب)
+            case SON_OF_FULL_BROTHER -> 9;      // التاسع
+            case SON_OF_PATERNAL_BROTHER -> 10; // العاشر
+            case FULL_UNCLE -> 11;              // الحادي عشر
+            case PATERNAL_UNCLE -> 12;          // الثاني عشر
+            case SON_OF_FULL_UNCLE -> 13;       // الثالث عشر
+            case SON_OF_PATERNAL_UNCLE -> 14;   // الرابع عشر
+            default -> 100;                     // ليسوا عصبة أو عصبة ضعيفة
         };
-
-
     }
+
     public boolean isSinglePerson() {
         return this == FATHER || this == MOTHER || this == HUSBAND ||
                 this==GRANDFATHER || this==GRANDMOTHER_MATERNAL || this==GRANDMOTHER_PATERNAL ||
                 this.isSpouse();
     }
 
+    /**
+     * ⭐ جديد: التحقق إذا كان الوارث ذكراً (لـ MALE_DOUBLE_FEMALE)
+     */
+    public boolean isMale() {
+        return switch (this) {
+            case SON, SON_OF_SON,
+                 FATHER, GRANDFATHER,
+                 FULL_BROTHER, PATERNAL_BROTHER, MATERNAL_BROTHER,
+                 SON_OF_FULL_BROTHER, SON_OF_PATERNAL_BROTHER,
+                 FULL_UNCLE, PATERNAL_UNCLE,
+                 SON_OF_FULL_UNCLE, SON_OF_PATERNAL_UNCLE,
+                 HUSBAND -> true;
+            default -> false;
+        };
+    }
 }

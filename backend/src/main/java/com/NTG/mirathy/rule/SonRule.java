@@ -17,10 +17,19 @@ public class SonRule implements InheritanceRule {
     public InheritanceShareDto calculate(InheritanceCase c) {
         HeirType heirType = HeirType.SON;
         int count = c.count(heirType);
-        ShareType shareType = ShareType.MALE_DOUBLE_FEMALE;
-        FixedShare fixedShare = null;
 
-        String reason = "يرث الأبناء الذكور والإناث معا تعصيبا للذكر مثل حظ الأنثيين لقوله تعالى (يُوصِيكُمُ اللَّهُ فِي أَوْلادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ)";
+        ShareType shareType;
+        String reason;
+
+        if (c.has(HeirType.DAUGHTER) || count > 1) {
+            // مع بنات، أو مع أكثر من ابن
+            shareType = ShareType.MALE_DOUBLE_FEMALE;
+            reason = "يرث الأبناء الذكور والإناث معاً تعصيباً للذكر مثل حظ الأنثيين لقوله تعالى (يُوصِيكُمُ اللَّهُ فِي أَوْلادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ)(النساء: 11)";
+        } else {
+            // ابن واحد فقط بدون بنات
+            shareType = ShareType.TAASIB;
+            reason = "يرث الابن تعصيباً لعدم وجود إخوة معه";
+        }
 
         return new InheritanceShareDto(
                 heirType,
@@ -28,7 +37,7 @@ public class SonRule implements InheritanceRule {
                 null,
                 null,
                 shareType,
-                fixedShare,  // ⚠️ null
+                null,
                 reason
         );
     }

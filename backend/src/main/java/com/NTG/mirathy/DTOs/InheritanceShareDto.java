@@ -25,15 +25,16 @@ public record InheritanceShareDto(
         );
     }
 
-    public InheritanceShareDto withCount(Integer count) {
+    public InheritanceShareDto withShareType(ShareType shareType, String reason) {
         return new InheritanceShareDto(
-                heirType,
-                count,
-                amountPerPerson,
-                totalAmount,
-                shareType,
-                fixedShare,
-                reason
+                heirType, count, amountPerPerson, totalAmount,
+                shareType, fixedShare, reason
+        );
+    }
+    public InheritanceShareDto withReason(String newReason) {
+        return new InheritanceShareDto(
+                heirType, count, amountPerPerson, totalAmount,
+                shareType, fixedShare, newReason
         );
     }
 }

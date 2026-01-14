@@ -55,7 +55,8 @@ public class InheritanceCase {
     }
 
     public boolean hasFemaleChild() {
-        return has(HeirType.DAUGHTER);
+        return (has(HeirType.DAUGHTER) || has(HeirType.DAUGHTER_OF_SON))
+               && !hasMaleChild();
     }
 
     public boolean hasDescendant() {
