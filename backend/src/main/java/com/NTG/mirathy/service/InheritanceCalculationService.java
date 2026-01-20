@@ -44,16 +44,18 @@ public class InheritanceCalculationService {
             }
         }
 
-        return calculateIndividualFraction(members, request, request.totalEstate().doubleValue());
+        return calculateIndividualFraction(members, request, inheritanceCase, request.totalEstate().doubleValue());
     }
 
-    private InheritanceCalculationResult calculateIndividualFraction(List<InheritanceShareDto> members, InheritanceCalculationRequest request, Double money) {
+    private InheritanceCalculationResult calculateIndividualFraction(List<InheritanceShareDto> members, InheritanceCalculationRequest request, InheritanceCase inheritanceCase, Double money) {
         String title = arabicInheritanceTextService.generateText(request);
         String note = null;
         boolean taaasibRuleFound = false;
         BigDecimal sum = BigDecimal.ZERO;
         List<InheritanceResult> resultList = new ArrayList<>();
         List<Fraction> fractionList = new ArrayList<>();
+        boolean isAmiria = inheritanceCase.isElamaria();
+
 
         for (InheritanceShareDto member : members) {
             if (member.shareType() == ShareType.FIXED) {
@@ -102,10 +104,15 @@ public class InheritanceCalculationService {
 
                 Fraction fraction = new Fraction(member.fixedShare().getNumerator(),
                         member.fixedShare().getDenominator());
-
-                String nasib = FractionUtils.fixedText(fraction) + ((flag) ? (" + " + member.taaasibRule().getDescription()) : "")
-                        + ((elradFlag && request.heirs().size() == 1) ? " و الباقى ردا" : "");
-
+                String nasib="";
+                if (isAmiria&&member.heirType()==HeirType.MOTHER) {
+                    nasib="الثلث الباقى بعد فرض ";
+                    nasib+=(inheritanceCase.has(HeirType.HUSBAND))?"الزوج":"الزوجة";
+                    note= "المسألة هى حالة خاصة و تسمى بالعمرية. وهى اجتماع الأم والأب مع أحد الزوجين. سميت بذلك لأن عمر رضي الله عنه قضى فيها بذلك ووافقه على ذلك زيد بن ثابت وعثمان بن عفان وعبد الله بن مسعود رضي الله عنهم ولكن خالفه فيها عبد الله بن عباس رضي الله عنه وجعل للأم ثلث التركة ، وتسمى المسألة أيضا الغراوية.";
+                } else {
+                     nasib = FractionUtils.fixedText(fraction) + ((flag) ? (" + " + member.taaasibRule().getDescription()) : "")
+                            + ((elradFlag && request.heirs().size() == 1) ? " و الباقى ردا" : "");
+                }
                 int memberCount = 0;
                 if (member.heirType() == HeirType.MATERNAL_SIBLING) {
                     memberCount = request.heirs().get(HeirType.MATERNAL_SISTER)
