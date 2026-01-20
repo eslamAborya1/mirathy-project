@@ -93,11 +93,10 @@
         
         <div class="border-t border-[#c0c0c0]/20 pt-2 space-y-1">
           <a *ngIf="!(authService.isLoggedIn$())" routerLink="/login" (click)="menuOpen=false" class="block">
-                        <button class="w-full bg-[#c0c0c0] text-[#1a1f2e] px-3 py-2 rounded-lg font-semibold hover:bg-[#a0a0a0] transition text-sm">تسجيل الدخول</button>
-
+            <button class="w-full bg-[#c0c0c0] text-[#1a1f2e] px-3 py-2 rounded-lg font-semibold hover:bg-[#a0a0a0] transition text-sm">تسجيل الدخول</button>
           </a>
           <button *ngIf="authService.isLoggedIn$()" (click)="logout(); menuOpen=false" 
-                                   class="w-full bg-[#d94136] text-white px-3 py-2 rounded-lg font-semibold hover:bg-[#b8342b] transition text-sm">تسجيل الخروج</button>
+                  class="w-full bg-[#d94136] text-white px-3 py-2 rounded-lg font-semibold hover:bg-[#b8342b] transition text-sm">تسجيل الخروج</button>
         </div>
       </div>
     </div>

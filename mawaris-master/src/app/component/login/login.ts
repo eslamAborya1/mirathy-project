@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+
 function noSpacesValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
   if (!value) return null;
@@ -55,7 +56,7 @@ export class Login {
         console.log(localStorage.getItem("token"))
         this.isLoading = false;
         console.log('Login successful');
-        this.toastr.success('تم تسجيل الدخول بنجاح!', 'نجاح', {
+        this.toastr.success('تم تسجيل الدخول بنجاح!', 'مرحباً بك', {
           positionClass: 'toast-bottom-left',
           timeOut: 7000
         });
