@@ -14,6 +14,7 @@ import com.NTG.mirathy.exceptionHandler.InvalidInheritanceCaseException;
 import com.NTG.mirathy.rule.InheritanceRule;
 import com.NTG.mirathy.util.FractionUtils;
 import com.NTG.mirathy.util.InheritanceCase;
+import com.NTG.mirathy.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,8 @@ public class InheritanceCalculationService {
 
     private final List<InheritanceRule> rules;
     private final ArabicInheritanceTextService arabicInheritanceTextService;
+    private final InheritanceProblemService  inheritanceProblemService;
+    private final SecurityUtil securityUtil;
 
     public InheritanceCalculationResult calculateProblem(
             InheritanceCalculationRequest request
@@ -288,7 +291,6 @@ public class InheritanceCalculationService {
                         type + " must not be more than " + maxAllowed
                 );
             }
-
 
         }
 

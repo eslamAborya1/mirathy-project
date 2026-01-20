@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 function noSpacesValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
@@ -27,7 +28,7 @@ export class Login {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  constructor() {
+  constructor(private toastr: ToastrService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email, noSpacesValidator]],
       password: ['', [Validators.required, Validators.minLength(6), noSpacesValidator]]
@@ -54,6 +55,11 @@ export class Login {
         this.router.navigate(['/home']);
         console.log(localStorage.getItem("token"))
         this.isLoading = false;
+        console.log('Login successful');
+        this.toastr.success('تم تسجيل الدخول بنجاح!', 'مرحباً بك', {
+          positionClass: 'toast-bottom-left',
+          timeOut: 7000
+        });
       },
       error: (err) => {
         this.errorMessage =

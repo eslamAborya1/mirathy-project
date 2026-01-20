@@ -18,6 +18,19 @@ type HeirName = 'husband' | 'wife' | 'son' | 'daughter' | 'father' | 'mother' |
   'fullBrother' | 'fullSister' | 'paternalBrother' |
   'paternalSister' | 'maternalBrother' | 'maternalSister';
 
+const MAX_VALUE = 1000000000000000;
+
+// Custom validator for max value
+function maxValueValidator(max: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) {
+      return null;
+    }
+    const value = Number(control.value);
+    return value > max ? { 'maxValue': { max: max, value: value } } : null;
+  };
+}
+
 // Custom validator for will amount - must not exceed 1/3 of (estate - debts)
 function willAmountValidator(form: FormGroup): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -64,6 +77,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   errorMessage = signal<string | null>(null);
   showLoginPrompt = signal(false);
   saveStatus = signal<'idle' | 'saved' | 'favorited'>('idle');
+  hasEstateAmount = signal(false);
   isRtl = this.languageService.isRtl;
 
   heirsArray = ['paternalGrandfather', 'maternalGrandfather', 'paternalGrandmother',
@@ -119,8 +133,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       deceasedGender: ['male', Validators.required],
-      estateAmount: [0, [Validators.required, Validators.min(0)]],
-      debts: [0, [Validators.min(0)]],
+      estateAmount: [0, [Validators.min(0), maxValueValidator(MAX_VALUE)]],
+      debts: [0, [Validators.min(0), maxValueValidator(MAX_VALUE)]],
       hasWill: [false],
       wills: this.fb.array([]),
       heirs: this.fb.group({
@@ -187,14 +201,23 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Re-validate wills when estate amount or debts change
+    // Mark estateAmount as touched on valueChanges to show validation in real-time
     this.form.get('estateAmount')?.valueChanges.subscribe(() => {
+      const estateControl = this.form.get('estateAmount');
+      if (estateControl && !estateControl.touched) {
+        estateControl.markAsTouched();
+      }
       this.wills.controls.forEach(will => {
         will.get('amount')?.updateValueAndValidity();
       });
     });
 
+    // Mark debts as touched on valueChanges to show validation in real-time
     this.form.get('debts')?.valueChanges.subscribe(() => {
+      const debtsControl = this.form.get('debts');
+      if (debtsControl && !debtsControl.touched) {
+        debtsControl.markAsTouched();
+      }
       this.wills.controls.forEach(will => {
         will.get('amount')?.updateValueAndValidity();
       });
@@ -297,8 +320,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   addWill() {
     if (this.wills.length < 5) {
       const willGroup = this.fb.group({
-        amount: [0, [Validators.min(0), (control: AbstractControl) => willAmountValidator(this.form)(control)]]
+        amount: [0, [Validators.min(0), maxValueValidator(MAX_VALUE), (control: AbstractControl) => willAmountValidator(this.form)(control)]]
       });
+      const amountControl = willGroup.get('amount');
+      if (amountControl) {
+        amountControl.valueChanges.subscribe(() => {
+          if (amountControl && !amountControl.touched) {
+            amountControl.markAsTouched();
+          }
+        });
+      }
       this.wills.push(willGroup);
     }
   }
@@ -315,7 +346,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   getEstateError(): string | null {
     const control = this.form.get('estateAmount');
     if (control?.invalid && control?.touched) {
-      if (control.errors?.['required']) return 'قيمة التركة مطلوبة';
+      if (control.errors?.['maxValue']) return 'قيمة التركة لا يمكن أن تتجاوز 1000000000000000';
       if (control.errors?.['min']) return 'قيمة التركة يجب أن تكون موجبة';
     }
     return null;
@@ -324,6 +355,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   getDebtsError(): string | null {
     const control = this.form.get('debts');
     if (control?.invalid && control?.touched) {
+      if (control.errors?.['maxValue']) return 'قيمة الديون لا يمكن أن تتجاوز 1000000000000000';
       if (control.errors?.['min']) return 'قيمة الديون لا يمكن أن تكون سالبة';
     }
     return null;
@@ -332,6 +364,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   getWillError(index: number): string | null {
     const control = this.wills.at(index)?.get('amount');
     if (control?.invalid && control?.touched) {
+      if (control.errors?.['maxValue']) return 'قيمة الوصية لا يمكن أن تتجاوز 1000000000000000';
       if (control.errors?.['min']) return 'قيمة الوصية لا يمكن أن تكون سالبة';
       if (control.errors?.['willExceedsLimit']) {
         const maxAmount = control.errors['willExceedsLimit'].max;
@@ -345,26 +378,30 @@ export class HomeComponent implements OnInit, OnDestroy {
     const estateValue = this.form.get('estateAmount')?.value;
     const estateControl = this.form.get('estateAmount');
 
-    if (!estateValue || estateValue === '' || estateControl?.invalid) {
-      if (!estateValue || estateValue === '') {
-        this.toastr.error('قيمة التركة مطلوبة', 'خطأ', {
-          positionClass: this.isRtl ? 'toast-top-left' : 'toast-top-right',
-          timeOut: 5000
-        });
-      }
-
+    // التحقق من صحة الحقول فقط
+    if (estateControl?.invalid) {
+      estateControl?.markAsTouched();
       setTimeout(() => {
         const estateInput = document.getElementById('estateAmount');
-        if (estateInput) estateInput.focus();
+        if (estateInput) {
+          estateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          estateInput.focus();
+        }
       }, 100);
-
-      estateControl?.markAsTouched();
       return;
     }
 
     this.markFormGroupTouched(this.form);
 
-    if (this.form.get('debts')?.invalid) {
+    const debtsControl = this.form.get('debts');
+    if (debtsControl?.invalid) {
+      setTimeout(() => {
+        const debtsInput = document.getElementById('debts');
+        if (debtsInput) {
+          debtsInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          debtsInput.focus();
+        }
+      }, 100);
       return;
     }
 
@@ -384,7 +421,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (firstInvalidWillIndex !== -1) {
         setTimeout(() => {
           const willInput = document.querySelector(`[formgroupname="${firstInvalidWillIndex}"] input[formcontrolname="amount"]`);
-          if (willInput) (willInput as HTMLElement).focus();
+          if (willInput) {
+            (willInput as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            (willInput as HTMLElement).focus();
+          }
         }, 100);
       }
       return;
@@ -403,10 +443,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     if (Object.keys(heirs).length === 0) {
       this.errorMessage.set('يجب اختيار وارث واحد على الأقل');
-      this.toastr.error('يجب اختيار وارث واحد على الأقل', 'خطأ', {
-        positionClass: this.isRtl ? 'toast-top-left' : 'toast-top-right',
-        timeOut: 5000
-      });
+      this.toastr.error('يجب اختيار وارث واحد على الأقل', 'خطأ');
+      setTimeout(() => {
+        const heirsSection = document.getElementById('heirsSection');
+        if (heirsSection) {
+          heirsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
       return;
     }
 
@@ -419,6 +462,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     console.log('Complete request body:', requestBody);
 
+    this.hasEstateAmount.set(!!formValue.estateAmount && formValue.estateAmount > 0);
     this.isLoading.set(true);
     this.errorMessage.set(null);
     this.calculationResult.set(null);
@@ -435,16 +479,19 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.isLoading.set(false);
         this.calculationResult.set(results);
         this.calculationDetails.set({
-          title: response.title,
-          note: response.note,  // إضافة هذه السطر
-          debts: requestBody.debts,
-          willAmount: requestBody.will,
-        });
+  title: response.title,
+  note: response.note,
+  totalEstate: requestBody.totalEstate,
+  debts: requestBody.debts,
+  willAmount: requestBody.will,
+  netEstate:
+    requestBody.totalEstate -
+    requestBody.debts -
+    requestBody.will
+});
 
-        this.toastr.success('تم حساب الميراث بنجاح', 'نجاح', {
-          positionClass: this.isRtl ? 'toast-top-left' : 'toast-top-right',
-          timeOut: 3000
-        });
+
+        this.toastr.success('تم حساب الميراث بنجاح', 'نجاح');
 
         // Auto-scroll to results section
         setTimeout(() => {
@@ -475,10 +522,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
 
         this.errorMessage.set(errorMsg);
-        this.toastr.error(errorMsg, 'خطأ', {
-          positionClass: this.isRtl ? 'toast-top-left' : 'toast-top-right',
-          timeOut: 5000
-        });
+        this.toastr.error(errorMsg, 'خطأ');
       }
     });
   }
@@ -522,10 +566,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.saveStatus.set(isFavorite ? 'favorited' : 'saved');
 
     const message = isFavorite ? 'تم إضافة الحساب إلى المفضلة' : 'تم حفظ الحساب بنجاح';
-    this.toastr.success(message, 'نجاح', {
-      positionClass: this.isRtl ? 'toast-top-left' : 'toast-top-right',
-      timeOut: 3000
-    });
+    this.toastr.success(message, 'نجاح');
 
     setTimeout(() => {
       if(this.saveStatus() !== 'idle') this.saveStatus.set('idle');
@@ -572,10 +613,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.saveStatus.set('idle');
     this.showLoginPrompt.set(false);
 
-    this.toastr.info('تم إعادة تعيين النموذج بنجاح', 'تم', {
-      positionClass: this.isRtl ? 'toast-top-left' : 'toast-top-right',
-      timeOut: 3000
-    });
+    this.toastr.info('تم إعادة تعيين النموذج بنجاح', 'تم');
 
     // Auto-scroll to top of page
     setTimeout(() => {

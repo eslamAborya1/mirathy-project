@@ -22,6 +22,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-navbar',
@@ -31,14 +32,22 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./navbar.css'],
 })
 export class Navbar {
-  constructor(private router:Router){}
+  constructor(private router: Router, private toastr: ToastrService) {}
   authService = inject(AuthService);
-  menuOpen = false; // للتحكم في قائمة الموبايل
+  menuOpen = false;
 
   logout() {
-    this.authService.logout();
-    this.menuOpen = false;
-    //localStorage.clear()
-    this.router.navigate(['/home']); // إعادة التوجيه إلى الصفحة الرئيسية بعد تسجيل الخروج
+    const isConfirmed = confirm('هل أنت متأكد من رغبتك في تسجيل الخروج؟');
+    if (isConfirmed) {
+      this.authService.logout();
+      this.toastr.success('تم تسجيل الخروج بنجاح', 'نجح', {
+        positionClass: 'toast-bottom-left',
+        timeOut: 2000
+      });
+      this.menuOpen = false;
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
+    }
   }
 }
