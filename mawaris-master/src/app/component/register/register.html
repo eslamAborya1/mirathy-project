@@ -137,6 +137,9 @@
               <div *ngIf="f['password']?.errors?.['spaces']" class="text-xs text-red-600 font-medium">
                 المسافات غير مسموحة في كلمة المرور
               </div>
+              <div *ngIf="f['password']?.errors?.['passwordStart']" class="text-xs text-red-600 font-medium">
+                كلمة المرور يجب أن تبدأ برقم أو حرف فقط
+              </div>
             </div>
           </div>
 
