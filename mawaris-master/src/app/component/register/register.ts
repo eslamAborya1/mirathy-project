@@ -28,6 +28,13 @@ function validNameValidator(control: AbstractControl): ValidationErrors | null {
   return null;
 }
 
+function passwordStartValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+  if (!value) return null;
+  // Password must start with a character (a-z, A-Z) or number (0-9)
+  return /^[a-zA-Z0-9]/.test(value) ? null : { passwordStart: true };
+}
+
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');
@@ -60,7 +67,7 @@ export class Register {
       {
         fullName: ['', [Validators.required, Validators.minLength(3), noSpacesValidator, validNameValidator]],
         email: ['', [Validators.required, Validators.email, noSpacesValidator]],
-        password: ['', [Validators.required, Validators.minLength(6), noSpacesValidator]],
+        password: ['', [Validators.required, Validators.minLength(6), noSpacesValidator, passwordStartValidator]],
         confirmPassword: ['', [Validators.required, noSpacesValidator]]
       },
       { validators: passwordMatchValidator }

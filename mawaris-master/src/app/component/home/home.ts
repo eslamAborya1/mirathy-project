@@ -620,4 +620,34 @@ export class HomeComponent implements OnInit, OnDestroy {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 200);
   }
+
+  // Handle numeric input only - prevent non-numeric characters
+  onNumericInput(event: KeyboardEvent): void {
+    const char = event.key;
+    
+    // Allow: backspace, delete, tab, escape, enter, decimal point
+    if ([
+      'Backspace', 'Delete', 'Tab', 'Escape', 'Enter', '.',
+      'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+      'Home', 'End', 'Control', 'Meta', 'Shift'
+    ].includes(char)) {
+      return;
+    }
+
+    // Allow: Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+A
+    if ((event.ctrlKey || event.metaKey) && ['c', 'v', 'x', 'a', 'C', 'V', 'X', 'A'].includes(char)) {
+      return;
+    }
+
+    // Reject: if it's not a digit (0-9)
+    if (!/[0-9]/.test(char)) {
+      event.preventDefault();
+      this.showNumericInputError();
+    }
+  }
+
+  // Show error message for invalid numeric input
+  private showNumericInputError(): void {
+    this.toastr.error('يرجى إدخال أرقام فقط', 'إدخال غير صحيح');
+  }
 }
