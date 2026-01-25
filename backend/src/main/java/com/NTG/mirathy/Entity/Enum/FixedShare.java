@@ -13,7 +13,11 @@ public enum FixedShare {
     EIGHTH(1, 8),
     TWO_THIRDS(2, 3),
     THIRD(1, 3),
-    SIXTH(1, 6);
+    SIXTH(1, 6),
+
+    //special case when there are grandmother paternal and grandmother maternal
+    TWELVE(1,12);
+
 
     private final int numerator;
     private final int denominator;

@@ -57,19 +57,21 @@ public class FractionUtils {
     public static String fixedText(Fraction fraction) {
         StringBuilder builder = new StringBuilder();
        if (fraction.numerator()==2){
-           builder.append("الثلثين ");
+           builder.append("الثلثين فرضا");
        } else if (fraction.denominator()==6) {
-           builder.append("السدس ");
+           builder.append("السدس فرضا");
        } else if (fraction.denominator()==8) {
-           builder.append("الثمن ");
+           builder.append("الثمن فرضا");
        }else if (fraction.denominator()==3) {
-           builder.append("الثلث ");
+           builder.append("الثلث فرضا");
        }else if (fraction.denominator()==2) {
-           builder.append("النصف ");
+           builder.append("النصف فرضا");
        }else if (fraction.denominator()==4) {
-           builder.append("الربع ");
+           builder.append("الربع فرضا");
+       }else if (fraction.denominator()==12) {
+           builder.append("تشترك الجدة لأم والجدة لأب فى السدس ويقسم بينهم بالتساوي");
        }
-       builder.append("فرضا ");
+
         return builder.toString();
     }
     public static String text(Fraction fraction) {

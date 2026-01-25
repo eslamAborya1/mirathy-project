@@ -17,6 +17,7 @@ public enum HeirType {
     GRANDFATHER("جد", 1),
     GRANDMOTHER_PATERNAL("جدة لأب", 1),
     GRANDMOTHER_MATERNAL("جدة لأم", 1),
+    GRANDMOTHERS("جدة لأم ولأب",1),
 
     // ====== الفروع ======
     SON("ابن", null),

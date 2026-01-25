@@ -72,5 +72,8 @@ public class InheritanceCase {
 
         return fullSiblingsCount;
     }
+    public boolean isElamaria(){
+        return (has(HeirType.WIFE)||has(HeirType.HUSBAND))&&has(HeirType.FATHER)&&has(HeirType.MOTHER)&&totalNumberOfHeirs() == 3;
+    }
 
 }
