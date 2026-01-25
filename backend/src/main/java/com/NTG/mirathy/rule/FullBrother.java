@@ -25,9 +25,9 @@ public class FullBrother implements InheritanceRule {
         ShareType shareType=null;
         TaaasibRule taaasibRule = null;
 
-        if (c.hasMaleChild()||c.has(HeirType.FATHER)||c.has(HeirType.GRANDFATHER)){
+        if (c.hasMaleChild()||c.has(HeirType.FATHER)){
             shareType=ShareType.Mahgub;
-            reason="رأى الأحناف  - أنه لا يرث الأخوة أو الأخوات فى حالة وجود الجد ، ودليلهم أنه ورد فى القرآن الكريم استعمال لفظ الأب فى مكان الجد ، ولأن الجد هو أولى رجل ذكر فهو أقرب من الأخ. أما باقى المذاهب فإنها تشرك الجد والأخوة فى التركة على اعتبار أن درجة قرابة الجد والأخوة للميت متساوية.";
+            reason="لا يرث الإخوه والأخوات الأشقاء عند وجود الولد - مثل الإبن وإبن الإبن وإن نزل - أو وجود الوالد - الأب فقط عند الجمهور .";
         }else if (c.has(HeirType.FULL_SISTER)){
             shareType=ShareType.TAASIB;
             taaasibRule=(c.totalNumberOfHeirs()==2)?TaaasibRule.MALE_TWICE_FEMALE_ALL:TaaasibRule.MALE_TWICE_FEMALE_REMAINDER;

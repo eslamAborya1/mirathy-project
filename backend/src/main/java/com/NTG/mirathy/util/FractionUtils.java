@@ -53,6 +53,14 @@ public class FractionUtils {
         return new Fraction(resultNumerator / gcd, resultDenominator / gcd);
     }
 
+    public static int compareFractions(Fraction f1, Fraction f2) {
+
+        long left = f1.numerator() * f2.denominator();
+        long right = f2.numerator() * f1.denominator();
+
+        return Long.compare(left, right);
+    }
+
 
     public static String fixedText(Fraction fraction) {
         StringBuilder builder = new StringBuilder();
@@ -76,6 +84,16 @@ public class FractionUtils {
     }
     public static String text(Fraction fraction) {
         return fraction.numerator()+"/"+fraction.denominator();
+    }
+    public static Fraction covertFractionTextToText(String fractionText) {
+        int index=fractionText.indexOf("/");
+        if (index==-1) {
+            return new Fraction(0,1);
+        }
+        int numerator=Integer.parseInt(fractionText.substring(0,index));
+        int denominator=Integer.parseInt(fractionText.substring(index+1));
+
+        return new Fraction(numerator,denominator);
     }
 
     private static long gcd(long a, long b) {

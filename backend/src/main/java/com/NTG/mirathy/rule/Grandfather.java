@@ -26,19 +26,24 @@ public class Grandfather implements InheritanceRule {
         if (inheritanceCase.has(HeirType.FATHER)) {
             shareType = ShareType.Mahgub;
             reason = "من أدلى الى الميت بواسطة حجبته تلك الواسطة عند وجودها . فأب الأب لايرث فى وجود الأب وأب أب الأب لا يرث فى وجود أب الأب.";
-        }else if (inheritanceCase.hasMaleChild()) {
+        } else if (inheritanceCase.hasMaleChild()) {
             shareType = ShareType.FIXED;
-            fixedShare=FixedShare.SIXTH;
-            reason="يرث الجد عند عدم وجود الأب السدس فقط فى حالة وجود الفرع الوارث المذكر (مثل الابن وابن الابن )";
-        } else if (!inheritanceCase.hasMaleChild()&&inheritanceCase.hasFemaleChild()) {
+            fixedShare = FixedShare.SIXTH;
+            reason = "يرث الجد عند عدم وجود الأب السدس فقط فى حالة وجود الفرع الوارث المذكر (مثل الابن وابن الابن )";
+        } else if (!inheritanceCase.hasMaleChild()
+                && (inheritanceCase.fullSiblingAndPaternalSibling() > 0)) {
             shareType = ShareType.FIXED;
-            fixedShare=FixedShare.SIXTH;
-            taaasibRule=TaaasibRule.REMAINDER_ONLY;
-            reason="يرث الجد عند عدم وجود الأب سدس التركة فى حالة وجود الفرع الوارث المؤنث (مثل البنت و بنت الابن و بنت ابن الإبن) لقوله تعالى (وَلأَبَوَيْهِ لِكُلِّ وَاحِدٍ مِنْهُمَا السُّدُسُ مِمَّا تَرَكَ إِنْ كَانَ لَهُ وَلَدٌ) .إضافة الى الباقى من التركة (إن تبقى شىء) تعصيبا لأنه أولى رجل ذكر لقولة ﷺ (ألحقوا الفرائض بأهلها فما بقى فهو لأولى رجل ذكر)";
-        }else {
+            fixedShare = FixedShare.SIXTH;
+            reason="اختار القانون المصرى منهج الإمام على فى توريث الجد والاخوة فيرث معهم كأخ مثلهم ان كانوا اخوة ذكورا فقط أو ذكورا وإناثا (منهج علي) او كانوا أخوة إناثا عصبة مع البنات (خالف فيها القانون علياً وأخذها من زيد بن ثابت)، أما ان كان الإخوة إناثا فقط ولم يعصبن بالبنات فله باقى التركة ، والشرط الأساسي ان لايكون ميراثه معهم كأخ أو أخذه الباقى ينقصة عن السدس وإلا أخذ السدس.";
+        } else if (!inheritanceCase.hasMaleChild() && inheritanceCase.hasFemaleChild()) {
+            shareType = ShareType.FIXED;
+            fixedShare = FixedShare.SIXTH;
+            taaasibRule = TaaasibRule.REMAINDER_ONLY;
+            reason = "يرث الجد عند عدم وجود الأب سدس التركة فى حالة وجود الفرع الوارث المؤنث (مثل البنت و بنت الابن و بنت ابن الإبن) لقوله تعالى (وَلأَبَوَيْهِ لِكُلِّ وَاحِدٍ مِنْهُمَا السُّدُسُ مِمَّا تَرَكَ إِنْ كَانَ لَهُ وَلَدٌ) .إضافة الى الباقى من التركة (إن تبقى شىء) تعصيبا لأنه أولى رجل ذكر لقولة ﷺ (ألحقوا الفرائض بأهلها فما بقى فهو لأولى رجل ذكر)";
+        } else {
             shareType = ShareType.TAASIB;
-            taaasibRule=TaaasibRule.REMAINDER_ONLY;
-            reason="يرث الجد عند عدم وجود الأب الباقى تعصيباً فى حالة عدم الفرع الوارث المذكر والمؤنث . قال ﷺ ( ألحقوا الفرائض بأهلها فما بقى فهو لأولى رجل ذكر.)";
+            taaasibRule = TaaasibRule.REMAINDER_ONLY;
+            reason = "يرث الجد عند عدم وجود الأب الباقى تعصيباً فى حالة عدم الفرع الوارث المذكر والمؤنث . قال ﷺ ( ألحقوا الفرائض بأهلها فما بقى فهو لأولى رجل ذكر.)";
         }
 
         return new InheritanceShareDto(heirType, shareType, fixedShare, taaasibRule, reason);

@@ -11,6 +11,7 @@ import com.NTG.mirathy.Entity.Enum.HeirType;
 import com.NTG.mirathy.Entity.Enum.ShareType;
 import com.NTG.mirathy.Entity.Enum.TaaasibRule;
 import com.NTG.mirathy.exceptionHandler.InvalidInheritanceCaseException;
+import com.NTG.mirathy.rule.GrandfatherAndSiblingsShare;
 import com.NTG.mirathy.rule.InheritanceRule;
 import com.NTG.mirathy.util.FractionUtils;
 import com.NTG.mirathy.util.InheritanceCase;
@@ -27,7 +28,8 @@ public class InheritanceCalculationService {
 
     private final List<InheritanceRule> rules;
     private final ArabicInheritanceTextService arabicInheritanceTextService;
-    private final InheritanceProblemService  inheritanceProblemService;
+    private final GrandfatherAndSiblingsShare grandfatherAndSiblingsShare;
+    private final InheritanceProblemService inheritanceProblemService;
     private final SecurityUtil securityUtil;
 
     public InheritanceCalculationResult calculateProblem(
@@ -107,13 +109,13 @@ public class InheritanceCalculationService {
 
                 Fraction fraction = new Fraction(member.fixedShare().getNumerator(),
                         member.fixedShare().getDenominator());
-                String nasib="";
-                if (isAmiria&&member.heirType()==HeirType.MOTHER) {
-                    nasib="الثلث الباقى بعد فرض ";
-                    nasib+=(inheritanceCase.has(HeirType.HUSBAND))?"الزوج":"الزوجة";
-                    note= "المسألة هى حالة خاصة و تسمى بالعمرية. وهى اجتماع الأم والأب مع أحد الزوجين. سميت بذلك لأن عمر رضي الله عنه قضى فيها بذلك ووافقه على ذلك زيد بن ثابت وعثمان بن عفان وعبد الله بن مسعود رضي الله عنهم ولكن خالفه فيها عبد الله بن عباس رضي الله عنه وجعل للأم ثلث التركة ، وتسمى المسألة أيضا الغراوية.";
+                String nasib = "";
+                if (isAmiria && member.heirType() == HeirType.MOTHER) {
+                    nasib = "الثلث الباقى بعد فرض ";
+                    nasib += (inheritanceCase.has(HeirType.HUSBAND)) ? "الزوج" : "الزوجة";
+                    note = "المسألة هى حالة خاصة و تسمى بالعمرية. وهى اجتماع الأم والأب مع أحد الزوجين. سميت بذلك لأن عمر رضي الله عنه قضى فيها بذلك ووافقه على ذلك زيد بن ثابت وعثمان بن عفان وعبد الله بن مسعود رضي الله عنهم ولكن خالفه فيها عبد الله بن عباس رضي الله عنه وجعل للأم ثلث التركة ، وتسمى المسألة أيضا الغراوية.";
                 } else {
-                     nasib = FractionUtils.fixedText(fraction) + ((flag) ? (" + " + member.taaasibRule().getDescription()) : "")
+                    nasib = FractionUtils.fixedText(fraction) + ((flag) ? (" + " + member.taaasibRule().getDescription()) : "")
                             + ((elradFlag && request.heirs().size() == 1) ? " و الباقى ردا" : "");
                 }
                 int memberCount = 0;
@@ -233,7 +235,13 @@ public class InheritanceCalculationService {
                             member.reason()));
                 }
             } else if (member.shareType() == ShareType.Mahgub) {
-                int memberCount = request.heirs().get(member.heirType());
+                int memberCount = 0;
+                if (member.heirType() == HeirType.MATERNAL_SIBLING) {
+                    memberCount = request.heirs().get(HeirType.MATERNAL_BROTHER);
+                    memberCount += request.heirs().get(HeirType.MATERNAL_SISTER);
+                } else {
+                    memberCount = request.heirs().get(member.heirType());
+                }
                 resultList.add(new InheritanceResult(
                         member.heirType().getArabicName(),
                         "محجوب",
@@ -246,9 +254,13 @@ public class InheritanceCalculationService {
         }
 
 
+        if (grandfatherAndSiblingsShare.canApplyGrandfatherAndSiblingsShare(inheritanceCase)) {
+            resultList = grandfatherAndSiblingsShare.applyIfSharingBetterForGrandfather(resultList, money);
+        }
         resultList.forEach(System.out::println);
 
         return new InheritanceCalculationResult(title, note, resultList);
+
     }
 
 

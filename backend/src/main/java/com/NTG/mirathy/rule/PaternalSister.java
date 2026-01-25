@@ -23,7 +23,7 @@ public class PaternalSister implements InheritanceRule {
         TaaasibRule taaasibRule = null;
         String reason = null;
 
-        if (c.hasMaleChild() || c.has(HeirType.FATHER) || c.has(HeirType.GRANDFATHER) ||
+        if (c.hasMaleChild() || c.has(HeirType.FATHER) ||
                 c.has(HeirType.FULL_BROTHER) || (c.has(HeirType.FULL_SISTER) && (c.has(HeirType.DAUGHTER) || (c.has(HeirType.DAUGHTER_OF_SON)))) ||
                 (c.count(HeirType.FULL_SISTER) >= 2 && !c.has(HeirType.PATERNAL_BROTHER))
         ) {

@@ -26,7 +26,7 @@ public class Mother implements InheritanceRule {
             shareType=ShareType.FIXED;
             fixedShare=(c.has(HeirType.WIFE)?FixedShare.QUARTER:FixedShare.SIXTH);
             reason="ترث الأم ثلث الباقى بعد نصيب الزوج أو الزوجة. قضى عمر رضى الله عنه بذلك لأن الله تعالى قدّر للأب ضعفها إذا انفردا بكل التركة فيكون له ضعفها من البعض أيضا إذا انفردا ببعض التركه.";
-        } else if (c.hasDescendant() || c.siblingCount(c) >= 2) {
+        } else if (c.hasDescendant() || c.siblingCount() >= 2) {
             fixedShare = FixedShare.SIXTH;
             shareType = ShareType.FIXED;
             reason = "الأم ترث السدس ً" +

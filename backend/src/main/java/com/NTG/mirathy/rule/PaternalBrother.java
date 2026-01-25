@@ -22,7 +22,7 @@ public class PaternalBrother implements InheritanceRule {
         FixedShare fixedShare = null;
         TaaasibRule taaasibRule = null;
         String reason = null;
-        if (c.hasMaleChild()||c.has(HeirType.FATHER)||c.has(HeirType.GRANDFATHER)||c.has(HeirType.FULL_BROTHER)||
+        if (c.hasMaleChild()||c.has(HeirType.FATHER)||c.has(HeirType.FULL_BROTHER)||
                 (c.has(HeirType.FULL_SISTER)&&(c.has(HeirType.DAUGHTER)||c.has(HeirType.DAUGHTER_OF_SON)))) {
             shareType=ShareType.Mahgub;
             reason="لإخوة والأخوات لأب محجوبون عند وجود الولد - مثل الإبن وإبن الإبن وإن نزل - أو وجود الوالد - الأب فقط عند الجمهور -و الجد عند الأحناف ، أوالأخ الشقيق ، أو اجتماع الشقيقة مع فرع وارث مؤنث - مثل البنت وبنت الإبن - لأن الشقيقة تصير بالبنات عصبة مع الغيروتحجب الأخوة لأب رجالا ونساء.";

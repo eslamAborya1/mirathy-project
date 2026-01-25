@@ -61,17 +61,22 @@ public class InheritanceCase {
         return totalEstate.subtract(debts).subtract(will);
     }
 
-    public int siblingCount(InheritanceCase c) {
+    public int siblingCount() {
         int fullSiblingsCount = 0;
-        fullSiblingsCount += c.count(HeirType.FULL_BROTHER);
-        fullSiblingsCount += c.count(HeirType.FULL_SISTER);
-        fullSiblingsCount += c.count(HeirType.PATERNAL_BROTHER);
-        fullSiblingsCount += c.count(HeirType.PATERNAL_SISTER);
-        fullSiblingsCount += c.count(HeirType.MATERNAL_BROTHER);
-        fullSiblingsCount += c.count(HeirType.MATERNAL_SISTER);
+        fullSiblingsCount += this.count(HeirType.FULL_BROTHER);
+        fullSiblingsCount += this.count(HeirType.FULL_SISTER);
+        fullSiblingsCount += this.count(HeirType.PATERNAL_BROTHER);
+        fullSiblingsCount += this.count(HeirType.PATERNAL_SISTER);
+        fullSiblingsCount += this.count(HeirType.MATERNAL_BROTHER);
+        fullSiblingsCount += this.count(HeirType.MATERNAL_SISTER);
 
         return fullSiblingsCount;
     }
+    public int fullSiblingAndPaternalSibling() {
+        return this.count(HeirType.FULL_BROTHER)+this.count(HeirType.FULL_SISTER)
+                +this.count(HeirType.PATERNAL_BROTHER)+this.count(HeirType.PATERNAL_SISTER);
+    }
+
     public boolean isElamaria(){
         return (has(HeirType.WIFE)||has(HeirType.HUSBAND))&&has(HeirType.FATHER)&&has(HeirType.MOTHER)&&totalNumberOfHeirs() == 3;
     }
